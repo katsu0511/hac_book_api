@@ -2,9 +2,12 @@ package com.haradakatsuya190511;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+
 import io.github.cdimascio.dotenv.Dotenv;
 
 @SpringBootApplication
+@ConfigurationPropertiesScan
 public class HacBookApiApplication {
 
 	public static void main(String[] args) {
@@ -12,6 +15,7 @@ public class HacBookApiApplication {
 		System.setProperty("DB_URL", dotenv.get("DB_URL"));
 	    System.setProperty("DB_USERNAME", dotenv.get("DB_USERNAME"));
 	    System.setProperty("DB_PASSWORD", dotenv.get("DB_PASSWORD"));
+	    System.setProperty("CORS_URL", dotenv.get("CORS_URL"));
 		
 		SpringApplication.run(HacBookApiApplication.class, args);
 	}
