@@ -1,0 +1,41 @@
+CREATE TABLE IF NOT EXISTS users(
+	id					BIGINT						AUTO_INCREMENT,
+	name				VARCHAR(32)					NOT NULL,
+	email				VARCHAR(100)				NOT NULL UNIQUE,
+	password			VARCHAR(255)				NOT NULL,
+	created_at			TIMESTAMP					NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY			(id)
+);
+
+CREATE TABLE IF NOT EXISTS settings(
+	user_id				BIGINT						,
+	language			VARCHAR(32)					NOT NULL DEFAULT 'English',
+	currency			VARCHAR(3)					NOT NULL DEFAULT 'CAD',
+	PRIMARY KEY			(user_id)					,
+	FOREIGN KEY			(user_id)					REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS categories(
+	id					BIGINT						AUTO_INCREMENT,
+	user_id				BIGINT						,
+	name				VARCHAR(100)				NOT NULL,
+	type				ENUM ('INCOME', 'EXPENSE')	NOT NULL,
+	is_active			BOOLEAN						NOT NULL DEFAULT TRUE,
+	PRIMARY KEY			(id)						,
+	FOREIGN KEY			(user_id)					REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS transactions(
+	id					BIGINT						AUTO_INCREMENT,
+	user_id				BIGINT						NOT NULL,
+	category_id			BIGINT						NOT NULL,
+	amount				DECIMAL(10, 2)				NOT NULL,
+	currency			VARCHAR(3)					NOT NULL,
+	description			VARCHAR(200)				DEFAULT NULL,
+	transaction_date	DATE						NOT NULL,
+	created_at			TIMESTAMP					NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at			TIMESTAMP					NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	PRIMARY KEY			(id)						,
+	FOREIGN KEY			(user_id)					REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY			(category_id)				REFERENCES categories(id) ON DELETE NO ACTION ON UPDATE CASCADE
+);
