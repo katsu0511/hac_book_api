@@ -16,6 +16,7 @@ public class HacBookApiApplication {
 	    System.setProperty("DB_USERNAME", dotenv.get("DB_USERNAME"));
 	    System.setProperty("DB_PASSWORD", dotenv.get("DB_PASSWORD"));
 	    System.setProperty("CORS_URL", dotenv.get("CORS_URL"));
+	    System.setProperty("JWT_SECRET", dotenv.get("JWT_SECRET"));
 		
 		SpringApplication.run(HacBookApiApplication.class, args);
 	}

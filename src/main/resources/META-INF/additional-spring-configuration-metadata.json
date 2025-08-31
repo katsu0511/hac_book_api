@@ -1,9 +1,12 @@
-{
-	"properties": [
-		{
-			"name": "app.cors.allowed-origin",
-			"type": "java.lang.String",
-			"description": "A description for 'app.cors.allowed-origin'"
-		}
-	]
-}
+{"properties": [
+  {
+    "name": "app.cors.allowed-origin",
+    "type": "java.lang.String",
+    "description": "A description for 'app.cors.allowed-origin'"
+  },
+  {
+    "name": "jwt.secret.secret-key",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.secret'"
+  }
+]}
