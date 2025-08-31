@@ -28,7 +28,7 @@ public class JwtAuthenticationFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
-	    HttpServletResponse httpResponse = (HttpServletResponse) response;
+		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		
 		String token = null;
 		Cookie[] cookies = httpRequest.getCookies();
