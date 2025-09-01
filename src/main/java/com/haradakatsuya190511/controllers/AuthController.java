@@ -38,7 +38,7 @@ public class AuthController {
 	JwtService jwtService;
 	
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto loginUser, HttpServletResponse response) {
+	public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginRequestDto loginUser, HttpServletResponse response) {
 		User user = authService.authenticate(loginUser.getEmail(), loginUser.getPassword());
 		String jwt = jwtUtil.generateToken(user);
 		Cookie cookie = new Cookie("token", jwt);
@@ -46,6 +46,8 @@ public class AuthController {
 //		cookie.setSecure(true);
 		cookie.setPath("/");
 		cookie.setMaxAge(3600);
+//		response.addHeader("Set-Cookie", "token=" + jwt + "; Path=/; HttpOnly; Secure; SameSite=Lax");
+		response.addHeader("Set-Cookie", "token=" + jwt + "; Path=/; HttpOnly; SameSite=Lax");
 		response.addCookie(cookie);
 		return ResponseEntity.ok(Map.of("message", "succeeded to login"));
 	}
