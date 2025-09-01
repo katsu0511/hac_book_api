@@ -7,12 +7,12 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class TokenService {
-	public String getToken(HttpServletRequest request) {
+	public Cookie getTokenCookie(HttpServletRequest request) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
 				if (cookie.getName().equals("token")) {
-					return cookie.getValue();
+					return cookie;
 				}
 			}
 		}
