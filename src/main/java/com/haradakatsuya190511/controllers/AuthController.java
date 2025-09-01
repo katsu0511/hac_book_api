@@ -50,6 +50,21 @@ public class AuthController {
 		return ResponseEntity.ok(Map.of("message", "succeeded to login"));
 	}
 	
+	@PostMapping("/logout")
+	public ResponseEntity<Map<String, String>> logout(HttpServletRequest request, HttpServletResponse response) {
+		Cookie tokenCookie = tokenService.getTokenCookie(request);
+		
+		if (tokenCookie != null) {
+			tokenCookie.setHttpOnly(true);
+//			cookie.setSecure(true);
+			tokenCookie.setPath("/");
+			tokenCookie.setMaxAge(0);
+			tokenCookie.setValue("");
+			response.addCookie(tokenCookie);
+		}
+		return ResponseEntity.ok(Map.of("message", "Succeeded to logout"));
+	}
+	
 	@GetMapping("/check-auth")
 	public ResponseEntity<Map<String, Boolean>> checkAuth(HttpServletRequest request, HttpServletResponse response) {
 		
