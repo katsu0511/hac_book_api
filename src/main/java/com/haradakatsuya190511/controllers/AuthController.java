@@ -46,8 +46,8 @@ public class AuthController {
 //		cookie.setSecure(true);
 		cookie.setPath("/");
 		cookie.setMaxAge(3600);
-//		response.addHeader("Set-Cookie", "token=" + jwt + "; Path=/; HttpOnly; Secure; SameSite=Lax");
-		response.addHeader("Set-Cookie", "token=" + jwt + "; Path=/; HttpOnly; SameSite=Lax");
+//		response.addHeader("Set-Cookie", "token=" + jwt + "; Path=/; HttpOnly; Secure; SameSite=Strict");
+		response.addHeader("Set-Cookie", "token=" + jwt + "; Path=/; HttpOnly; SameSite=Strict");
 		response.addCookie(cookie);
 		return ResponseEntity.ok(Map.of("message", "succeeded to login"));
 	}
