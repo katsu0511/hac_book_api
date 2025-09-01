@@ -3,8 +3,10 @@ package com.haradakatsuya190511.controllers;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -69,19 +71,8 @@ public class AuthController {
 	
 	@GetMapping("/check-auth")
 	public ResponseEntity<Map<String, Boolean>> checkAuth(HttpServletRequest request, HttpServletResponse response) {
-		
-		Cookie tokenCookie = tokenService.getTokenCookie(request);
-		
-		if (tokenCookie != null) {
-			String token = tokenCookie.getValue();
-			try {
-				jwtService.checkJwts(token, response);
-				return ResponseEntity.ok(Map.of("authenticated", true));
-			} catch (Exception e) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("authenticated", false));
-			}
-		} else {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("authenticated", false));
-		}
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		boolean authenticated = authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken);
+		return ResponseEntity.ok(Map.of("authenticated", authenticated));
 	}
 }
