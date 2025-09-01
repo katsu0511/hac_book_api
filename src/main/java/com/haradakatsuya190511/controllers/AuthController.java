@@ -68,9 +68,10 @@ public class AuthController {
 	@GetMapping("/check-auth")
 	public ResponseEntity<Map<String, Boolean>> checkAuth(HttpServletRequest request, HttpServletResponse response) {
 		
-		String token = tokenService.getToken(request);
+		Cookie tokenCookie = tokenService.getTokenCookie(request);
 		
-		if (token != null) {
+		if (tokenCookie != null) {
+			String token = tokenCookie.getValue();
 			try {
 				jwtService.checkJwts(token, response);
 				return ResponseEntity.ok(Map.of("authenticated", true));
