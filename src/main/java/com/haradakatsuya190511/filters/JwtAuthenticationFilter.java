@@ -13,6 +13,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -30,9 +31,10 @@ public class JwtAuthenticationFilter implements Filter {
 		
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
-		String token = tokenService.getToken(httpRequest);
+		Cookie tokenCookie = tokenService.getTokenCookie(httpRequest);
 		
-		if (token != null) {
+		if (tokenCookie != null) {
+			String token = tokenCookie.getValue();
 			try {
 				jwtService.checkJwts(token, httpResponse);
 				chain.doFilter(request, response);
