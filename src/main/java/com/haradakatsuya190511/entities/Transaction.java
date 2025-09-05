@@ -58,6 +58,15 @@ public class Transaction {
 	@JoinColumn(name = "category_id")
 	private Category category;
 	
+	public Transaction(User user, Category category, BigDecimal amount, String currency, String description, LocalDate transactionDate) {
+		this.user = user;
+		this.category = category;
+		this.amount = amount;
+		this.currency = currency;
+		this.description = description;
+		this.transactionDate = transactionDate;
+	}
+	
 	public Long getId() {
 		return id;
 	}

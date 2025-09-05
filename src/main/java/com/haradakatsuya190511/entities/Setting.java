@@ -37,6 +37,10 @@ public class Setting {
 	@JsonIgnore
 	private User user;
 	
+	public Setting(Long userId) {
+		this.userId = userId;
+	}
+	
 	public Long getUserId() {
 		return userId;
 	}

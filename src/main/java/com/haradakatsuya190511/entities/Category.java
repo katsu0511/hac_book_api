@@ -36,7 +36,7 @@ public class Category {
 	private String name;
 	
 	@Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+	@Column(nullable = false)
 	@NotNull
     private CategoryType type;
 	
@@ -51,6 +51,12 @@ public class Category {
 	@OneToMany(mappedBy = "category")
 	@JsonIgnore
 	private List<Transaction> transactions = new ArrayList<>();
+	
+	public Category(User user, String name, CategoryType type) {
+		this.user = user;
+		this.name = name;
+		this.type = type;
+	}
 	
 	public Long getId() {
 		return id;
