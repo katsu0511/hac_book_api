@@ -1,6 +1,7 @@
 package com.haradakatsuya190511.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.haradakatsuya190511.entities.User;
@@ -13,9 +14,12 @@ public class AuthService {
 	@Autowired
 	UserRepository repository;
 	
+	@Autowired
+	PasswordEncoder passwordEncoder;
+	
 	public User authenticate(String email, String password) {
 		return repository.findByEmail(email)
-				.filter(u -> u.getPassword().equals(password))
-				.orElseThrow(() -> new LoginFailedException());
+				.filter(user -> passwordEncoder.matches(password, user.getPassword()))
+				.orElseThrow(LoginFailedException::new);
     }
 }
