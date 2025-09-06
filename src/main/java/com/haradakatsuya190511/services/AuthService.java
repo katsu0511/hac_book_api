@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class AuthService {
 	
 	@Autowired
-	UserRepository repository;
+	UserRepository userRepository;
 	
 	@Autowired
 	PasswordEncoder passwordEncoder;
@@ -25,7 +25,7 @@ public class AuthService {
 	JwtUtil jwtUtil;
 	
 	public User authenticate(String email, String password) {
-		return repository.findByEmail(email)
+		return userRepository.findByEmail(email)
 				.filter(user -> passwordEncoder.matches(password, user.getPassword()))
 				.orElseThrow(LoginFailedException::new);
     }
