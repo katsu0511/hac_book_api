@@ -50,6 +50,7 @@ public class AuthController {
 			tokenCookie.setValue("");
 			response.addCookie(tokenCookie);
 		}
+		
 		return ResponseEntity.ok(Map.of("message", "Succeeded to logout"));
 	}
 	
