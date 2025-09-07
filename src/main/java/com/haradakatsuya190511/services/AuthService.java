@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.exceptions.LoginFailedException;
+import com.haradakatsuya190511.exceptions.SignupFailedException;
 import com.haradakatsuya190511.repositories.UserRepository;
 import com.haradakatsuya190511.utils.JwtUtil;
 
@@ -29,6 +30,12 @@ public class AuthService {
 				.filter(user -> passwordEncoder.matches(password, user.getPassword()))
 				.orElseThrow(LoginFailedException::new);
     }
+	
+	public void checkEmailNotExists(String email) {
+		userRepository.findByEmail(email).ifPresent(user -> {
+			throw new SignupFailedException();
+		});
+	}
 	
 	public void login(HttpServletResponse response, User user) {
 		String jwt = jwtUtil.generateToken(user);
