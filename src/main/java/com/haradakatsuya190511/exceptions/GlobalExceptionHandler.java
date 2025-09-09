@@ -25,6 +25,13 @@ public class GlobalExceptionHandler {
 			.body(Map.of("loginFailed", ex.getMessage()));
 	}
 	
+	@ExceptionHandler(SignupFailedException.class)
+	public ResponseEntity<Map<String, String>> handleSignupFailed(SignupFailedException ex) {
+		return ResponseEntity
+			.status(HttpStatus.CONFLICT)
+			.body(Map.of("signupFailed", ex.getMessage()));
+	}
+	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
 		Map<String, String> errors = new HashMap<>();

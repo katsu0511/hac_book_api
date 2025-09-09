@@ -13,11 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.haradakatsuya190511.dtos.LoginRequestDto;
+import com.haradakatsuya190511.dtos.SignupRequestDto;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.services.AuthService;
-import com.haradakatsuya190511.services.JwtService;
 import com.haradakatsuya190511.services.TokenService;
-import com.haradakatsuya190511.utils.JwtUtil;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,28 +28,14 @@ public class AuthController {
 	
 	@Autowired
 	AuthService authService;
-
-	@Autowired
-	JwtUtil jwtUtil;
 	
 	@Autowired
 	TokenService tokenService;
 	
-	@Autowired
-	JwtService jwtService;
-	
 	@PostMapping("/login")
 	public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginRequestDto loginUser, HttpServletResponse response) {
 		User user = authService.authenticate(loginUser.getEmail(), loginUser.getPassword());
-		String jwt = jwtUtil.generateToken(user);
-		Cookie cookie = new Cookie("token", jwt);
-		cookie.setHttpOnly(true);
-//		cookie.setSecure(true);
-		cookie.setPath("/");
-		cookie.setMaxAge(3600);
-//		response.addHeader("Set-Cookie", "token=" + jwt + "; Path=/; HttpOnly; Secure; SameSite=None");
-		response.addHeader("Set-Cookie", "token=" + jwt + "; Path=/; HttpOnly; SameSite=Strict");
-		response.addCookie(cookie);
+		authService.login(response, user);
 		return ResponseEntity.ok(Map.of("message", "succeeded to login"));
 	}
 	
@@ -66,7 +51,15 @@ public class AuthController {
 			tokenCookie.setValue("");
 			response.addCookie(tokenCookie);
 		}
+		
 		return ResponseEntity.ok(Map.of("message", "Succeeded to logout"));
+	}
+	
+	@PostMapping("/signup")
+	public ResponseEntity<Map<String, String>> signup(@Valid @RequestBody SignupRequestDto signupUser, HttpServletResponse response) {
+		User user = authService.signup(signupUser);
+		authService.login(response, user);
+		return ResponseEntity.ok(Map.of("message", "succeeded to signup"));
 	}
 	
 	@GetMapping("/check-auth")

@@ -5,7 +5,7 @@ import com.haradakatsuya190511.validations.Password;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public class UserRequestDto {
+public class SignupRequestDto {
 	@NotBlank
 	private String name;
 	
@@ -16,7 +16,7 @@ public class UserRequestDto {
 	@Password
 	private String password;
 	
-	public UserRequestDto() {}
+	public SignupRequestDto() {}
 	
 	public String getName() {
 		return name;
