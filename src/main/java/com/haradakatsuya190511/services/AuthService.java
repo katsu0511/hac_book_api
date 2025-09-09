@@ -3,10 +3,14 @@ package com.haradakatsuya190511.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.haradakatsuya190511.dtos.SignupRequestDto;
+import com.haradakatsuya190511.entities.Setting;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.exceptions.LoginFailedException;
 import com.haradakatsuya190511.exceptions.SignupFailedException;
+import com.haradakatsuya190511.repositories.SettingRepository;
 import com.haradakatsuya190511.repositories.UserRepository;
 import com.haradakatsuya190511.utils.JwtUtil;
 
@@ -24,6 +28,9 @@ public class AuthService {
 	
 	@Autowired
 	JwtUtil jwtUtil;
+	
+	@Autowired
+	SettingRepository settingRepository;
 	
 	public User authenticate(String email, String password) {
 		return userRepository.findByEmail(email)
@@ -45,5 +52,15 @@ public class AuthService {
 		cookie.setPath("/");
 		cookie.setMaxAge(3600);
 		response.addCookie(cookie);
+	}
+	
+	@Transactional
+	public User signup(SignupRequestDto signupUser) {
+		checkEmailNotExists(signupUser.getEmail());
+		String hashedPassword = passwordEncoder.encode(signupUser.getPassword());
+		User user = new User(signupUser.getName(), signupUser.getEmail(), hashedPassword);
+		User savedUser = userRepository.save(user);
+		settingRepository.save(new Setting(savedUser));
+		return savedUser;
 	}
 }
