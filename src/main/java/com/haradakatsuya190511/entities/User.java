@@ -55,6 +55,8 @@ public class User {
 	@JsonIgnore
 	private List<Transaction> transactions = new ArrayList<>();
 	
+	public User() {}
+	
 	public User(String name, String email, String password) {
 		this.name = name;
 		this.email = email;

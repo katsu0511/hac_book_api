@@ -52,6 +52,8 @@ public class Category {
 	@JsonIgnore
 	private List<Transaction> transactions = new ArrayList<>();
 	
+	public Category() {}
+	
 	public Category(User user, String name, CategoryType type) {
 		this.user = user;
 		this.name = name;
