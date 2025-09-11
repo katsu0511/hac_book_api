@@ -10,6 +10,7 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -34,6 +35,7 @@ public class Setting {
 	@OneToOne
 	@MapsId
 	@JoinColumn(name = "user_id")
+	@NotNull
 	@JsonIgnore
 	private User user;
 	
