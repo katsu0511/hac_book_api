@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.haradakatsuya190511.dtos.LoginRequestDto;
 import com.haradakatsuya190511.dtos.SignupRequestDto;
+import com.haradakatsuya190511.dtos.UserResponseDto;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.services.AuthService;
 import com.haradakatsuya190511.services.TokenService;
@@ -33,10 +34,10 @@ public class AuthController {
 	TokenService tokenService;
 	
 	@PostMapping("/login")
-	public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginRequestDto loginUser, HttpServletResponse response) {
+	public ResponseEntity<UserResponseDto> login(@Valid @RequestBody LoginRequestDto loginUser, HttpServletResponse response) {
 		User user = authService.authenticate(loginUser.getEmail(), loginUser.getPassword());
 		authService.login(response, user);
-		return ResponseEntity.ok(Map.of("message", "succeeded to login"));
+		return ResponseEntity.ok(new UserResponseDto(user));
 	}
 	
 	@PostMapping("/logout")
@@ -56,10 +57,10 @@ public class AuthController {
 	}
 	
 	@PostMapping("/signup")
-	public ResponseEntity<Map<String, String>> signup(@Valid @RequestBody SignupRequestDto signupUser, HttpServletResponse response) {
+	public ResponseEntity<UserResponseDto> signup(@Valid @RequestBody SignupRequestDto signupUser, HttpServletResponse response) {
 		User user = authService.signup(signupUser);
 		authService.login(response, user);
-		return ResponseEntity.ok(Map.of("message", "succeeded to signup"));
+		return ResponseEntity.ok(new UserResponseDto(user));
 	}
 	
 	@GetMapping("/check-auth")
