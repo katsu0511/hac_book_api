@@ -30,18 +30,19 @@ public class Transaction {
 	@Column(precision = 10, scale = 2, nullable = false)
 	@NotNull
 	@Digits(integer = 8, fraction = 2)
-	private BigDecimal amount;
+	private BigDecimal amount = BigDecimal.ZERO;
 	
 	@Column(length = 3, nullable = false)
 	@NotBlank
 	@Pattern(regexp = "^[A-Z]{3}$")
-	private String currency;
+	private String currency = "CAD";
 	
 	@Column(length = 200)
 	@Size(max = 200)
 	private String description;
 	
 	@Column(nullable = false)
+	@NotNull
 	private LocalDate transactionDate;
 	
 	@Column(insertable = false, updatable = false)
@@ -52,10 +53,12 @@ public class Transaction {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
+	@NotNull
 	private User user;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
+	@NotNull
 	private Category category;
 	
 	public Transaction() {}
