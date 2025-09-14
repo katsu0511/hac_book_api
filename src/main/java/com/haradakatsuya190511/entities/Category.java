@@ -40,6 +40,10 @@ public class Category {
 	@NotNull
     private CategoryType type;
 	
+	@Column(length = 200)
+	@Size(max = 200)
+	private String description;
+	
 	@Column(nullable = false)
 	private boolean isActive = true;
 	
@@ -48,7 +52,16 @@ public class Category {
 	@JsonIgnore
 	private User user;
 	
-	@OneToMany(mappedBy = "category")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "parent_id")
+	@JsonIgnore
+	private Category parentCategory;
+	
+	@OneToMany(mappedBy = "parentCategory", fetch = FetchType.LAZY)
+	@JsonIgnore
+	private List<Category> childCategories = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
 	@JsonIgnore
 	private List<Transaction> transactions = new ArrayList<>();
 	
@@ -80,6 +93,14 @@ public class Category {
 		this.type = type;
 	}
 	
+	public String getDescription() {
+		return description;
+	}
+	
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
 	public boolean isActive() {
 		return isActive;
 	}
@@ -90,6 +111,22 @@ public class Category {
 	
 	public User getUser() {
 		return user;
+	}
+	
+	public Category getParentCategory() {
+	    return parentCategory;
+	}
+	
+	public void setParentCategory(Category parentCategory) {
+		this.parentCategory = parentCategory;
+	}
+	
+	public List<Category> getChildCategories() {
+	    return childCategories;
+	}
+	
+	public void setChildCategories(List<Category> childCategories) {
+		this.childCategories = childCategories;
 	}
 	
 	public List<Transaction> getTransactions() {
