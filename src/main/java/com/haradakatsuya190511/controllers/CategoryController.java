@@ -7,8 +7,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.haradakatsuya190511.dtos.AddCategoryRequestDto;
 import com.haradakatsuya190511.entities.Category;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.services.AuthService;
@@ -32,5 +35,12 @@ public class CategoryController {
 				"expense", categoryService.getExpenseCategories(user)
 			)
 		);
+	}
+	
+	@PostMapping("/add/category")
+	public ResponseEntity<Map<String, Category>> addCategory(@RequestBody AddCategoryRequestDto request, Principal principal) {
+		User user = authService.getUser(principal);
+		Category category = categoryService.addCategory(user, request);
+		return ResponseEntity.ok(Map.of("category", category));
 	}
 }
