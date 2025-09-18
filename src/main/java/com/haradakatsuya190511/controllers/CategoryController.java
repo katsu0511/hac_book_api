@@ -37,6 +37,12 @@ public class CategoryController {
 		);
 	}
 	
+	@GetMapping("/parentCategory")
+	public ResponseEntity<List<Category>> parentCategory(Principal principal) {
+		User user = authService.getUser(principal);
+		return ResponseEntity.ok(categoryService.getParentCategories(user));
+	}
+	
 	@PostMapping("/add/category")
 	public ResponseEntity<Map<String, Category>> addCategory(@RequestBody AddCategoryRequestDto request, Principal principal) {
 		User user = authService.getUser(principal);
