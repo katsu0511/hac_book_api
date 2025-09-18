@@ -25,6 +25,10 @@ public class CategoryService {
 		return categoryRepository.findExpenseByUserOrDefault(user);
 	}
 	
+	public List<Category> getParentCategories(User user) {
+		return categoryRepository.findParentCategoriesByUserOrDefault(user);
+	}
+	
 	public Category addCategory(User user, AddCategoryRequestDto request) {
 		Long parentId = request.getParentId();
 		Category parentCategory = categoryRepository.findById(parentId).orElse(null);
