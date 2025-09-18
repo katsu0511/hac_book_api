@@ -36,6 +36,7 @@ public class CategoryService {
 		CategoryType type = request.getType();
 		String description = request.getDescription();
 		Category category = new Category(user, parentCategory, name, type, description);
+		categoryRepository.save(category);
 		return category;
 	}
 }
