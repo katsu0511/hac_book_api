@@ -1,6 +1,9 @@
 package com.haradakatsuya190511.services;
 
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,5 +65,12 @@ public class AuthService {
 		User savedUser = userRepository.save(user);
 		settingRepository.save(new Setting(savedUser));
 		return savedUser;
+	}
+	
+	public User getUser(Principal principal) {
+		String email = principal.getName();
+		User user = userRepository.findByEmail(email)
+	                  .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+		return user;
 	}
 }

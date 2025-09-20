@@ -46,17 +46,7 @@ CREATE TABLE IF NOT EXISTS transactions(
 
 INSERT INTO categories (user_id, name, type)
 SELECT * FROM (
-	SELECT NULL AS user_id, 'Salary' AS name, 'INCOME' AS type
-	WHERE NOT EXISTS (
-		SELECT 1 FROM categories WHERE user_id IS NULL AND name = 'Salary'
-	)
-	UNION ALL
-	SELECT NULL, 'Others', 'INCOME'
-	WHERE NOT EXISTS (
-		SELECT 1 FROM categories WHERE user_id IS NULL AND name = 'Others'
-	)
-	UNION ALL
-	SELECT NULL, 'Housing', 'EXPENSE'
+	SELECT NULL AS user_id, 'Housing' AS name, 'EXPENSE' AS type
 	WHERE NOT EXISTS (
 		SELECT 1 FROM categories WHERE user_id IS NULL AND name = 'Housing'
 	)
@@ -122,6 +112,16 @@ SELECT * FROM (
 	)
 	UNION ALL
 	SELECT NULL, 'Others', 'EXPENSE'
+	WHERE NOT EXISTS (
+		SELECT 1 FROM categories WHERE user_id IS NULL AND name = 'Others'
+	)
+	UNION ALL
+	SELECT NULL, 'Salary', 'INCOME'
+	WHERE NOT EXISTS (
+		SELECT 1 FROM categories WHERE user_id IS NULL AND name = 'Salary'
+	)
+	UNION ALL
+	SELECT NULL, 'Others', 'INCOME'
 	WHERE NOT EXISTS (
 		SELECT 1 FROM categories WHERE user_id IS NULL AND name = 'Others'
 	)

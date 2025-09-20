@@ -67,10 +67,12 @@ public class Category {
 	
 	public Category() {}
 	
-	public Category(User user, String name, CategoryType type) {
+	public Category(User user, Category parentCategory, String name, CategoryType type, String description) {
 		this.user = user;
+		this.parentCategory = parentCategory;
 		this.name = name;
 		this.type = type;
+		this.description = description;
 	}
 	
 	public Long getId() {

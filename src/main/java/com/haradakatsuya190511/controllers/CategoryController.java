@@ -6,31 +6,47 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.haradakatsuya190511.dtos.AddCategoryRequestDto;
 import com.haradakatsuya190511.entities.Category;
 import com.haradakatsuya190511.entities.User;
-import com.haradakatsuya190511.repositories.CategoryRepository;
-import com.haradakatsuya190511.repositories.UserRepository;
+import com.haradakatsuya190511.services.AuthService;
+import com.haradakatsuya190511.services.CategoryService;
 
 @RestController
 public class CategoryController {
 	
 	@Autowired
-	UserRepository userRepository;
+	AuthService authService;
 	
 	@Autowired
-	CategoryRepository categoryRepository;
+	CategoryService categoryService;
 	
 	@GetMapping("/display/category")
-	public ResponseEntity<Map<String, ?>> displayCategory(Principal principal) {
-		String email = principal.getName();
-		User user = userRepository.findByEmail(email)
-	                  .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-		List<Category> incomeCategories = categoryRepository.findIncomeByUserOrDefault(user);
-		List<Category> expenseCategories = categoryRepository.findExpenseByUserOrDefault(user);
-		return ResponseEntity.ok(Map.of("income", incomeCategories, "expense", expenseCategories));
+	public ResponseEntity<Map<String, List<Category>>> displayCategory(Principal principal) {
+		User user = authService.getUser(principal);
+		return ResponseEntity.ok(
+			Map.of(
+				"income", categoryService.getIncomeCategories(user),
+				"expense", categoryService.getExpenseCategories(user)
+			)
+		);
+	}
+	
+	@GetMapping("/parentCategory")
+	public ResponseEntity<List<Category>> parentCategory(Principal principal) {
+		User user = authService.getUser(principal);
+		return ResponseEntity.ok(categoryService.getParentCategories(user));
+	}
+	
+	@PostMapping("/add/category")
+	public ResponseEntity<Map<String, Category>> addCategory(@RequestBody AddCategoryRequestDto request, Principal principal) {
+		User user = authService.getUser(principal);
+		Category category = categoryService.addCategory(user, request);
+		return ResponseEntity.ok(Map.of("category", category));
 	}
 }
