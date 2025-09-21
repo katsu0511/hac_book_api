@@ -1,8 +1,9 @@
 package com.haradakatsuya190511.dtos;
 
+import com.haradakatsuya190511.dtos.shared.CategoryRequest;
 import com.haradakatsuya190511.enums.CategoryType;
 
-public class AddCategoryRequestDto {
+public class AddCategoryRequestDto implements CategoryRequest {
 	private Long parentId;
 	private String name;
 	private CategoryType type;
