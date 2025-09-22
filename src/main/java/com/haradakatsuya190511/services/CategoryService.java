@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.haradakatsuya190511.dtos.AddCategoryRequestDto;
 import com.haradakatsuya190511.dtos.CategoryResponseDto;
+import com.haradakatsuya190511.dtos.shared.CategoryRequest;
 import com.haradakatsuya190511.entities.Category;
 import com.haradakatsuya190511.entities.User;
-import com.haradakatsuya190511.enums.CategoryType;
 import com.haradakatsuya190511.repositories.CategoryRepository;
 
 @Service
@@ -35,13 +35,17 @@ public class CategoryService {
 	}
 	
 	public Category addCategory(User user, AddCategoryRequestDto request) {
+		Category category = new Category(user);
+		applyCategoryInfo(category, request);
+		return categoryRepository.save(category);
+	}
+	
+	private void applyCategoryInfo(Category category, CategoryRequest request) {
 		Long parentId = request.getParentId();
 		Category parentCategory = categoryRepository.findById(parentId).orElse(null);
-		String name = request.getName();
-		CategoryType type = request.getType();
-		String description = request.getDescription();
-		Category category = new Category(user, parentCategory, name, type, description);
-		categoryRepository.save(category);
-		return category;
+		category.setParentCategory(parentCategory);
+		category.setName(request.getName());
+		category.setType(request.getType());
+		category.setDescription(request.getDescription());
 	}
 }
