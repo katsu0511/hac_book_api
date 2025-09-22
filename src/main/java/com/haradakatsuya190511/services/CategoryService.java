@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.haradakatsuya190511.dtos.AddCategoryRequestDto;
+import com.haradakatsuya190511.dtos.CategoryResponseDto;
 import com.haradakatsuya190511.entities.Category;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.enums.CategoryType;
@@ -17,12 +18,16 @@ public class CategoryService {
 	@Autowired
 	CategoryRepository categoryRepository;
 	
-	public List<Category> getIncomeCategories(User user) {
-		return categoryRepository.findIncomeByUserOrDefault(user);
+	public List<CategoryResponseDto> getIncomeCategories(User user) {
+		return categoryRepository.findIncomeByUserOrDefault(user).stream()
+			.map(CategoryResponseDto::new)
+			.toList();
 	}
 	
-	public List<Category> getExpenseCategories(User user) {
-		return categoryRepository.findExpenseByUserOrDefault(user);
+	public List<CategoryResponseDto> getExpenseCategories(User user) {
+		return categoryRepository.findExpenseByUserOrDefault(user).stream()
+			.map(CategoryResponseDto::new)
+			.toList();
 	}
 	
 	public List<Category> getParentCategories(User user) {
