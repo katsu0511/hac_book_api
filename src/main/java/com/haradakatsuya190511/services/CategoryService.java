@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.haradakatsuya190511.dtos.AddCategoryRequestDto;
 import com.haradakatsuya190511.dtos.CategoryResponseDto;
+import com.haradakatsuya190511.dtos.ModifyCategoryRequestDto;
 import com.haradakatsuya190511.dtos.shared.CategoryRequest;
 import com.haradakatsuya190511.entities.Category;
 import com.haradakatsuya190511.entities.User;
@@ -44,6 +45,15 @@ public class CategoryService {
 	
 	public Category addCategory(User user, AddCategoryRequestDto request) {
 		Category category = new Category(user);
+		applyCategoryInfo(category, request);
+		return categoryRepository.save(category);
+	}
+	
+	public Category modifyCategory(User user, ModifyCategoryRequestDto request) {
+		Long id = request.getId();
+		Category category = categoryRepository.findById(id)
+				.filter(c -> c.getUser().getId().equals(user.getId()))
+				.orElseThrow(CategoryNotFoundException::new);
 		applyCategoryInfo(category, request);
 		return categoryRepository.save(category);
 	}
