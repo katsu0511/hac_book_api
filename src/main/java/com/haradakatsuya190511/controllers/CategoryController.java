@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +27,12 @@ public class CategoryController {
 	
 	@Autowired
 	CategoryService categoryService;
+	
+	@GetMapping("/category/{id}")
+	public ResponseEntity<CategoryResponseDto> getCategory(@PathVariable("id") Long id, Principal principal) {
+		User user = authService.getUser(principal);
+		return ResponseEntity.ok(categoryService.getCategory(user, id));
+	}
 	
 	@GetMapping("/display/category")
 	public ResponseEntity<Map<String, List<CategoryResponseDto>>> displayCategory(Principal principal) {
