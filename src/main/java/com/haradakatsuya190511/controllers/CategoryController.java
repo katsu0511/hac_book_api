@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.haradakatsuya190511.dtos.AddCategoryRequestDto;
 import com.haradakatsuya190511.dtos.CategoryResponseDto;
+import com.haradakatsuya190511.dtos.ModifyCategoryRequestDto;
 import com.haradakatsuya190511.entities.Category;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.services.AuthService;
@@ -55,6 +56,13 @@ public class CategoryController {
 	public ResponseEntity<Map<String, Category>> addCategory(@RequestBody AddCategoryRequestDto request, Principal principal) {
 		User user = authService.getUser(principal);
 		Category category = categoryService.addCategory(user, request);
+		return ResponseEntity.ok(Map.of("category", category));
+	}
+	
+	@PostMapping("/modify/category")
+	public ResponseEntity<Map<String, Category>> modifyCategory(@RequestBody ModifyCategoryRequestDto request, Principal principal) {
+		User user = authService.getUser(principal);
+		Category category = categoryService.modifyCategory(user, request);
 		return ResponseEntity.ok(Map.of("category", category));
 	}
 }
