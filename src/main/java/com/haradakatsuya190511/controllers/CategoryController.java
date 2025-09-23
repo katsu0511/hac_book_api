@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.haradakatsuya190511.dtos.AddCategoryRequestDto;
+import com.haradakatsuya190511.dtos.CategoryResponseDto;
 import com.haradakatsuya190511.entities.Category;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.services.AuthService;
@@ -27,7 +28,7 @@ public class CategoryController {
 	CategoryService categoryService;
 	
 	@GetMapping("/display/category")
-	public ResponseEntity<Map<String, List<Category>>> displayCategory(Principal principal) {
+	public ResponseEntity<Map<String, List<CategoryResponseDto>>> displayCategory(Principal principal) {
 		User user = authService.getUser(principal);
 		return ResponseEntity.ok(
 			Map.of(
