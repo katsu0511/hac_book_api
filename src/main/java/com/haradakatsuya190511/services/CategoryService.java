@@ -43,13 +43,13 @@ public class CategoryService {
 			.orElseThrow(CategoryNotFoundException::new);
 	}
 	
-	public Category addCategory(User user, AddCategoryRequestDto request) {
+	public Category createCategory(User user, AddCategoryRequestDto request) {
 		Category category = new Category(user);
 		applyCategoryInfo(category, request);
 		return categoryRepository.save(category);
 	}
 	
-	public Category modifyCategory(User user, ModifyCategoryRequestDto request) {
+	public Category updateCategory(User user, ModifyCategoryRequestDto request) {
 		Long id = request.getId();
 		Category category = categoryRepository.findById(id)
 				.filter(c -> c.getUser().getId().equals(user.getId()))
