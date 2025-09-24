@@ -32,8 +32,10 @@ public class CategoryService {
 			.toList();
 	}
 	
-	public List<Category> getParentCategories(User user) {
-		return categoryRepository.findParentCategoriesByUserOrDefault(user);
+	public List<CategoryResponseDto> getParentCategories(User user) {
+		return categoryRepository.findParentCategoriesByUserOrDefault(user).stream()
+			.map(CategoryResponseDto::new)
+			.toList();
 	}
 	
 	public CategoryResponseDto getCategory(User user, Long id) {
@@ -43,19 +45,19 @@ public class CategoryService {
 			.orElseThrow(CategoryNotFoundException::new);
 	}
 	
-	public Category createCategory(User user, AddCategoryRequestDto request) {
+	public CategoryResponseDto createCategory(User user, AddCategoryRequestDto request) {
 		Category category = new Category(user);
 		applyCategoryInfo(category, request);
-		return categoryRepository.save(category);
+		return new CategoryResponseDto(categoryRepository.save(category));
 	}
 	
-	public Category updateCategory(User user, ModifyCategoryRequestDto request) {
+	public CategoryResponseDto updateCategory(User user, ModifyCategoryRequestDto request) {
 		Long id = request.getId();
 		Category category = categoryRepository.findById(id)
 				.filter(c -> c.getUser().getId().equals(user.getId()))
 				.orElseThrow(CategoryNotFoundException::new);
 		applyCategoryInfo(category, request);
-		return categoryRepository.save(category);
+		return new CategoryResponseDto(categoryRepository.save(category));
 	}
 	
 	private void applyCategoryInfo(Category category, CategoryRequest request) {

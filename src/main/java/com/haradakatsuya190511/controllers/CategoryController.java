@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.haradakatsuya190511.dtos.AddCategoryRequestDto;
 import com.haradakatsuya190511.dtos.CategoryResponseDto;
 import com.haradakatsuya190511.dtos.ModifyCategoryRequestDto;
-import com.haradakatsuya190511.entities.Category;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.services.AuthService;
 import com.haradakatsuya190511.services.CategoryService;
@@ -48,19 +47,19 @@ public class CategoryController {
 	}
 	
 	@GetMapping("/categories/parents")
-	public ResponseEntity<List<Category>> getParentCategories(Principal principal) {
+	public ResponseEntity<List<CategoryResponseDto>> getParentCategories(Principal principal) {
 		User user = authService.getUser(principal);
 		return ResponseEntity.ok(categoryService.getParentCategories(user));
 	}
 	
 	@PostMapping("/categories")
-	public ResponseEntity<Category> createCategory(@RequestBody AddCategoryRequestDto request, Principal principal) {
+	public ResponseEntity<CategoryResponseDto> createCategory(@RequestBody AddCategoryRequestDto request, Principal principal) {
 		User user = authService.getUser(principal);
 		return ResponseEntity.ok(categoryService.createCategory(user, request));
 	}
 	
 	@PutMapping("/categories/{id}")
-	public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody ModifyCategoryRequestDto request, Principal principal) {
+	public ResponseEntity<CategoryResponseDto> updateCategory(@PathVariable Long id, @RequestBody ModifyCategoryRequestDto request, Principal principal) {
 		User user = authService.getUser(principal);
 		return ResponseEntity.ok(categoryService.updateCategory(user, request));
 	}
