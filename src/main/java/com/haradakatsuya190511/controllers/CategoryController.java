@@ -29,12 +29,6 @@ public class CategoryController {
 	@Autowired
 	CategoryService categoryService;
 	
-	@GetMapping("/categories/{id}")
-	public ResponseEntity<CategoryResponseDto> getCategory(Principal principal, @PathVariable("id") Long id) {
-		User user = authService.getUser(principal);
-		return ResponseEntity.ok(categoryService.getCategory(user, id));
-	}
-	
 	@GetMapping("/categories")
 	public ResponseEntity<Map<String, List<CategoryResponseDto>>> getCategories(Principal principal) {
 		User user = authService.getUser(principal);
@@ -50,6 +44,12 @@ public class CategoryController {
 	public ResponseEntity<List<CategoryResponseDto>> getParentCategories(Principal principal) {
 		User user = authService.getUser(principal);
 		return ResponseEntity.ok(categoryService.getParentCategories(user));
+	}
+	
+	@GetMapping("/categories/{id}")
+	public ResponseEntity<CategoryResponseDto> getCategory(Principal principal, @PathVariable("id") Long id) {
+		User user = authService.getUser(principal);
+		return ResponseEntity.ok(categoryService.getCategory(user, id));
 	}
 	
 	@PostMapping("/categories")
