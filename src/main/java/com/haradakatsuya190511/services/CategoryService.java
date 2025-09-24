@@ -51,9 +51,9 @@ public class CategoryService {
 		return new CategoryResponseDto(categoryRepository.save(category));
 	}
 	
-	public CategoryResponseDto updateCategory(User user, ModifyCategoryRequestDto request) {
-		Long id = request.getId();
+	public CategoryResponseDto updateCategory(User user, Long id, ModifyCategoryRequestDto request) {
 		Category category = categoryRepository.findById(id)
+				.filter(c -> c.getId().equals(request.getId()))
 				.filter(c -> c.getUser().getId().equals(user.getId()))
 				.orElseThrow(CategoryNotFoundException::new);
 		applyCategoryInfo(category, request);

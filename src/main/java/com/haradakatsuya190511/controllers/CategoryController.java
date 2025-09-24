@@ -61,6 +61,6 @@ public class CategoryController {
 	@PutMapping("/categories/{id}")
 	public ResponseEntity<CategoryResponseDto> updateCategory(Principal principal, @PathVariable Long id, @RequestBody ModifyCategoryRequestDto request) {
 		User user = authService.getUser(principal);
-		return ResponseEntity.ok(categoryService.updateCategory(user, request));
+		return ResponseEntity.ok(categoryService.updateCategory(user, id, request));
 	}
 }
