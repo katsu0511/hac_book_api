@@ -54,16 +54,14 @@ public class CategoryController {
 	}
 	
 	@PostMapping("/categories")
-	public ResponseEntity<Map<String, Category>> createCategory(@RequestBody AddCategoryRequestDto request, Principal principal) {
+	public ResponseEntity<Category> createCategory(@RequestBody AddCategoryRequestDto request, Principal principal) {
 		User user = authService.getUser(principal);
-		Category category = categoryService.createCategory(user, request);
-		return ResponseEntity.ok(Map.of("category", category));
+		return ResponseEntity.ok(categoryService.createCategory(user, request));
 	}
 	
 	@PutMapping("/categories/{id}")
-	public ResponseEntity<Map<String, Category>> updateCategory(@PathVariable Long id, @RequestBody ModifyCategoryRequestDto request, Principal principal) {
+	public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody ModifyCategoryRequestDto request, Principal principal) {
 		User user = authService.getUser(principal);
-		Category category = categoryService.updateCategory(user, request);
-		return ResponseEntity.ok(Map.of("category", category));
+		return ResponseEntity.ok(categoryService.updateCategory(user, request));
 	}
 }
