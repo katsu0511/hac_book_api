@@ -30,7 +30,7 @@ public class CategoryController {
 	CategoryService categoryService;
 	
 	@GetMapping("/categories/{id}")
-	public ResponseEntity<CategoryResponseDto> getCategory(@PathVariable("id") Long id, Principal principal) {
+	public ResponseEntity<CategoryResponseDto> getCategory(Principal principal, @PathVariable("id") Long id) {
 		User user = authService.getUser(principal);
 		return ResponseEntity.ok(categoryService.getCategory(user, id));
 	}
@@ -53,13 +53,13 @@ public class CategoryController {
 	}
 	
 	@PostMapping("/categories")
-	public ResponseEntity<CategoryResponseDto> createCategory(@RequestBody AddCategoryRequestDto request, Principal principal) {
+	public ResponseEntity<CategoryResponseDto> createCategory(Principal principal, @RequestBody AddCategoryRequestDto request) {
 		User user = authService.getUser(principal);
 		return ResponseEntity.ok(categoryService.createCategory(user, request));
 	}
 	
 	@PutMapping("/categories/{id}")
-	public ResponseEntity<CategoryResponseDto> updateCategory(@PathVariable Long id, @RequestBody ModifyCategoryRequestDto request, Principal principal) {
+	public ResponseEntity<CategoryResponseDto> updateCategory(Principal principal, @PathVariable Long id, @RequestBody ModifyCategoryRequestDto request) {
 		User user = authService.getUser(principal);
 		return ResponseEntity.ok(categoryService.updateCategory(user, request));
 	}
