@@ -33,40 +33,31 @@ public class AuthController {
 	@Autowired
 	TokenService tokenService;
 	
-	@PostMapping("/login")
-	public ResponseEntity<UserResponseDto> login(@Valid @RequestBody LoginRequestDto loginUser, HttpServletResponse response) {
-		User user = authService.authenticate(loginUser.getEmail(), loginUser.getPassword());
-		authService.login(response, user);
-		return ResponseEntity.ok(new UserResponseDto(user));
-	}
-	
-	@PostMapping("/logout")
-	public ResponseEntity<Map<String, String>> logout(HttpServletRequest request, HttpServletResponse response) {
-		Cookie tokenCookie = tokenService.getTokenCookie(request);
-		
-		if (tokenCookie != null) {
-			tokenCookie.setHttpOnly(true);
-//			cookie.setSecure(true);
-			tokenCookie.setPath("/");
-			tokenCookie.setMaxAge(0);
-			tokenCookie.setValue("");
-			response.addCookie(tokenCookie);
-		}
-		
-		return ResponseEntity.ok(Map.of("message", "Succeeded to logout"));
-	}
-	
-	@PostMapping("/signup")
-	public ResponseEntity<UserResponseDto> signup(@Valid @RequestBody SignupRequestDto signupUser, HttpServletResponse response) {
-		User user = authService.signup(signupUser);
-		authService.login(response, user);
-		return ResponseEntity.ok(new UserResponseDto(user));
-	}
-	
 	@GetMapping("/check-auth")
 	public ResponseEntity<Map<String, Boolean>> checkAuth(HttpServletRequest request, HttpServletResponse response) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		boolean authenticated = authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken);
 		return ResponseEntity.ok(Map.of("authenticated", authenticated));
+	}
+	
+	@PostMapping("/login")
+	public ResponseEntity<UserResponseDto> login(@Valid @RequestBody LoginRequestDto loginUser, HttpServletResponse response) {
+		User user = authService.authenticate(loginUser.getEmail(), loginUser.getPassword());
+		authService.login(user, response);
+		return ResponseEntity.ok(new UserResponseDto(user));
+	}
+	
+	@PostMapping("/logout")
+	public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+		Cookie tokenCookie = tokenService.getTokenCookie(request);
+		authService.logout(tokenCookie, response);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@PostMapping("/signup")
+	public ResponseEntity<UserResponseDto> signup(@Valid @RequestBody SignupRequestDto signupUser, HttpServletResponse response) {
+		User user = authService.signup(signupUser);
+		authService.login(user, response);
+		return ResponseEntity.ok(new UserResponseDto(user));
 	}
 }

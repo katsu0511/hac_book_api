@@ -41,13 +41,7 @@ public class AuthService {
 				.orElseThrow(LoginFailedException::new);
     }
 	
-	public void checkEmailNotExists(String email) {
-		userRepository.findByEmail(email).ifPresent(user -> {
-			throw new SignupFailedException();
-		});
-	}
-	
-	public void login(HttpServletResponse response, User user) {
+	public void login(User user, HttpServletResponse response) {
 		String jwt = jwtUtil.generateToken(user);
 		Cookie cookie = new Cookie("token", jwt);
 		cookie.setHttpOnly(true);
@@ -55,6 +49,17 @@ public class AuthService {
 		cookie.setPath("/");
 		cookie.setMaxAge(3600);
 		response.addCookie(cookie);
+	}
+	
+	public void logout(Cookie cookie, HttpServletResponse response) {
+		if (cookie != null) {
+			cookie.setHttpOnly(true);
+//			token.setSecure(true);
+			cookie.setPath("/");
+			cookie.setMaxAge(0);
+			cookie.setValue("");
+			response.addCookie(cookie);
+		}
 	}
 	
 	@Transactional
@@ -65,6 +70,12 @@ public class AuthService {
 		User savedUser = userRepository.save(user);
 		settingRepository.save(new Setting(savedUser));
 		return savedUser;
+	}
+	
+	public void checkEmailNotExists(String email) {
+		userRepository.findByEmail(email).ifPresent(user -> {
+			throw new SignupFailedException();
+		});
 	}
 	
 	public User getUser(Principal principal) {
