@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,7 +41,7 @@ public class CategoryController {
 		);
 	}
 	
-	@GetMapping("/categories/parents")
+	@GetMapping("/parent-categories")
 	public ResponseEntity<List<CategoryResponseDto>> getParentCategories(Principal principal) {
 		User user = authService.getUser(principal);
 		return ResponseEntity.ok(categoryService.getParentCategories(user));
@@ -55,7 +56,7 @@ public class CategoryController {
 	@PostMapping("/categories")
 	public ResponseEntity<CategoryResponseDto> createCategory(Principal principal, @RequestBody AddCategoryRequestDto request) {
 		User user = authService.getUser(principal);
-		return ResponseEntity.ok(categoryService.createCategory(user, request));
+		return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(user, request));
 	}
 	
 	@PutMapping("/categories/{id}")
