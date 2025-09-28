@@ -62,7 +62,7 @@ public class CategoryService {
 	
 	private void applyCategoryInfo(Category category, CategoryRequest request) {
 		Long parentId = request.getParentId();
-		Category parentCategory = categoryRepository.findById(parentId).orElse(null);
+		Category parentCategory = parentId == null ? null : categoryRepository.findById(parentId).orElseThrow(CategoryNotFoundException::new);
 		category.setParentCategory(parentCategory);
 		category.setName(request.getName());
 		category.setType(request.getType());
