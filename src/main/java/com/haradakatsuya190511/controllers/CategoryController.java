@@ -5,14 +5,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.haradakatsuya190511.dtos.AddCategoryRequestDto;
-import com.haradakatsuya190511.entities.Category;
+import com.haradakatsuya190511.dtos.CategoryResponseDto;
+import com.haradakatsuya190511.dtos.ModifyCategoryRequestDto;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.services.AuthService;
 import com.haradakatsuya190511.services.CategoryService;
@@ -26,8 +30,8 @@ public class CategoryController {
 	@Autowired
 	CategoryService categoryService;
 	
-	@GetMapping("/display/category")
-	public ResponseEntity<Map<String, List<Category>>> displayCategory(Principal principal) {
+	@GetMapping("/categories")
+	public ResponseEntity<Map<String, List<CategoryResponseDto>>> getCategories(Principal principal) {
 		User user = authService.getUser(principal);
 		return ResponseEntity.ok(
 			Map.of(
@@ -37,16 +41,27 @@ public class CategoryController {
 		);
 	}
 	
-	@GetMapping("/parentCategory")
-	public ResponseEntity<List<Category>> parentCategory(Principal principal) {
+	@GetMapping("/parent-categories")
+	public ResponseEntity<List<CategoryResponseDto>> getParentCategories(Principal principal) {
 		User user = authService.getUser(principal);
 		return ResponseEntity.ok(categoryService.getParentCategories(user));
 	}
 	
-	@PostMapping("/add/category")
-	public ResponseEntity<Map<String, Category>> addCategory(@RequestBody AddCategoryRequestDto request, Principal principal) {
+	@GetMapping("/categories/{id}")
+	public ResponseEntity<CategoryResponseDto> getCategory(Principal principal, @PathVariable("id") Long id) {
 		User user = authService.getUser(principal);
-		Category category = categoryService.addCategory(user, request);
-		return ResponseEntity.ok(Map.of("category", category));
+		return ResponseEntity.ok(categoryService.getCategory(user, id));
+	}
+	
+	@PostMapping("/categories")
+	public ResponseEntity<CategoryResponseDto> createCategory(Principal principal, @RequestBody AddCategoryRequestDto request) {
+		User user = authService.getUser(principal);
+		return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(user, request));
+	}
+	
+	@PutMapping("/categories/{id}")
+	public ResponseEntity<CategoryResponseDto> updateCategory(Principal principal, @PathVariable("id") Long id, @RequestBody ModifyCategoryRequestDto request) {
+		User user = authService.getUser(principal);
+		return ResponseEntity.ok(categoryService.updateCategory(user, id, request));
 	}
 }

@@ -6,9 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.haradakatsuya190511.dtos.AddCategoryRequestDto;
+import com.haradakatsuya190511.dtos.CategoryResponseDto;
+import com.haradakatsuya190511.dtos.ModifyCategoryRequestDto;
+import com.haradakatsuya190511.dtos.shared.CategoryRequest;
 import com.haradakatsuya190511.entities.Category;
 import com.haradakatsuya190511.entities.User;
-import com.haradakatsuya190511.enums.CategoryType;
+import com.haradakatsuya190511.exceptions.CategoryNotFoundException;
 import com.haradakatsuya190511.repositories.CategoryRepository;
 
 @Service
@@ -17,26 +20,52 @@ public class CategoryService {
 	@Autowired
 	CategoryRepository categoryRepository;
 	
-	public List<Category> getIncomeCategories(User user) {
-		return categoryRepository.findIncomeByUserOrDefault(user);
+	public List<CategoryResponseDto> getIncomeCategories(User user) {
+		return categoryRepository.findIncomeByUserOrDefault(user).stream()
+			.map(CategoryResponseDto::new)
+			.toList();
 	}
 	
-	public List<Category> getExpenseCategories(User user) {
-		return categoryRepository.findExpenseByUserOrDefault(user);
+	public List<CategoryResponseDto> getExpenseCategories(User user) {
+		return categoryRepository.findExpenseByUserOrDefault(user).stream()
+			.map(CategoryResponseDto::new)
+			.toList();
 	}
 	
-	public List<Category> getParentCategories(User user) {
-		return categoryRepository.findParentCategoriesByUserOrDefault(user);
+	public List<CategoryResponseDto> getParentCategories(User user) {
+		return categoryRepository.findParentCategoriesByUserOrDefault(user).stream()
+			.map(CategoryResponseDto::new)
+			.toList();
 	}
 	
-	public Category addCategory(User user, AddCategoryRequestDto request) {
+	public CategoryResponseDto getCategory(User user, Long id) {
+		return categoryRepository.findById(id)
+			.filter(c -> c.getUser().getId().equals(user.getId()))
+			.map(CategoryResponseDto::new)
+			.orElseThrow(CategoryNotFoundException::new);
+	}
+	
+	public CategoryResponseDto createCategory(User user, AddCategoryRequestDto request) {
+		Category category = new Category(user);
+		applyCategoryInfo(category, request);
+		return new CategoryResponseDto(categoryRepository.save(category));
+	}
+	
+	public CategoryResponseDto updateCategory(User user, Long id, ModifyCategoryRequestDto request) {
+		Category category = categoryRepository.findById(id)
+				.filter(c -> c.getId().equals(request.getId()))
+				.filter(c -> c.getUser().getId().equals(user.getId()))
+				.orElseThrow(CategoryNotFoundException::new);
+		applyCategoryInfo(category, request);
+		return new CategoryResponseDto(categoryRepository.save(category));
+	}
+	
+	private void applyCategoryInfo(Category category, CategoryRequest request) {
 		Long parentId = request.getParentId();
-		Category parentCategory = categoryRepository.findById(parentId).orElse(null);
-		String name = request.getName();
-		CategoryType type = request.getType();
-		String description = request.getDescription();
-		Category category = new Category(user, parentCategory, name, type, description);
-		categoryRepository.save(category);
-		return category;
+		Category parentCategory = parentId == null ? null : categoryRepository.findById(parentId).orElseThrow(CategoryNotFoundException::new);
+		category.setParentCategory(parentCategory);
+		category.setName(request.getName());
+		category.setType(request.getType());
+		category.setDescription(request.getDescription());
 	}
 }
