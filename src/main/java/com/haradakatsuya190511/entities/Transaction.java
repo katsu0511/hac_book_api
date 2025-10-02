@@ -35,7 +35,7 @@ public class Transaction {
 	@Column(length = 3, nullable = false)
 	@NotBlank
 	@Pattern(regexp = "^[A-Z]{3}$")
-	private String currency = "CAD";
+	private String currency;
 	
 	@Column(length = 200)
 	@Size(max = 200)
