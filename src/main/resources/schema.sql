@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS transactions(
 	user_id				BIGINT						NOT NULL,
 	category_id			BIGINT						NOT NULL,
 	amount				DECIMAL(10, 2)				NOT NULL DEFAULT 0,
-	currency			VARCHAR(3)					NOT NULL DEFAULT 'CAD',
+	currency			VARCHAR(3)					NOT NULL,
 	description			VARCHAR(200)				DEFAULT NULL,
 	transaction_date	DATE						NOT NULL,
 	created_at			TIMESTAMP					NOT NULL DEFAULT CURRENT_TIMESTAMP,
