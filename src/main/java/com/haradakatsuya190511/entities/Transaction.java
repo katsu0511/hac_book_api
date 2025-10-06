@@ -63,13 +63,8 @@ public class Transaction {
 	
 	public Transaction() {}
 	
-	public Transaction(User user, Category category, BigDecimal amount, String currency, String description, LocalDate transactionDate) {
+	public Transaction(User user) {
 		this.user = user;
-		this.category = category;
-		this.amount = amount;
-		this.currency = currency;
-		this.description = description;
-		this.transactionDate = transactionDate;
 	}
 	
 	public Long getId() {
