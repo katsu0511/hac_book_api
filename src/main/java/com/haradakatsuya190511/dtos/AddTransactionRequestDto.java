@@ -3,7 +3,9 @@ package com.haradakatsuya190511.dtos;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class AddTransactionRequestDto {
+import com.haradakatsuya190511.dtos.shared.TransactionRequest;
+
+public class AddTransactionRequestDto implements TransactionRequest {
 	private Long userId;
 	private Long categoryId;
 	private BigDecimal amount;
