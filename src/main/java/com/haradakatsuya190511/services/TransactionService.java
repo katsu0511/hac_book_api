@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.haradakatsuya190511.dtos.AddTransactionRequestDto;
+import com.haradakatsuya190511.dtos.ModifyTransactionRequestDto;
 import com.haradakatsuya190511.dtos.TransactionResponseDto;
 import com.haradakatsuya190511.dtos.shared.TransactionRequest;
 import com.haradakatsuya190511.entities.Category;
@@ -40,6 +41,15 @@ public class TransactionService {
 	
 	public TransactionResponseDto createTransaction(User user, AddTransactionRequestDto request) {
 		Transaction transaction = new Transaction(user);
+		applyTransactionInfo(transaction, request);
+		return new TransactionResponseDto(transactionRepository.save(transaction));
+	}
+	
+	public TransactionResponseDto updateTransaction(User user, Long id, ModifyTransactionRequestDto request) {
+		Transaction transaction = transactionRepository.findById(id)
+				.filter(t -> t.getId().equals(request.getId()))
+				.filter(t -> t.getUser().getId().equals(user.getId()))
+				.orElseThrow(TransactionNotFoundException::new);
 		applyTransactionInfo(transaction, request);
 		return new TransactionResponseDto(transactionRepository.save(transaction));
 	}
