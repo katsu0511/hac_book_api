@@ -11,6 +11,7 @@ import com.haradakatsuya190511.entities.Category;
 import com.haradakatsuya190511.entities.Transaction;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.exceptions.CategoryNotFoundException;
+import com.haradakatsuya190511.exceptions.TransactionNotFoundException;
 import com.haradakatsuya190511.repositories.CategoryRepository;
 import com.haradakatsuya190511.repositories.TransactionRepository;
 
@@ -27,6 +28,13 @@ public class TransactionService {
 		return transactionRepository.findByUser(user).stream()
 			.map(TransactionResponseDto::new)
 			.toList();
+	}
+	
+	public TransactionResponseDto getTransaction(User user, Long id) {
+		return transactionRepository.findById(id)
+			.filter(t -> t.getUser().getId().equals(user.getId()))
+			.map(TransactionResponseDto::new)
+			.orElseThrow(TransactionNotFoundException::new);
 	}
 	
 	public TransactionResponseDto createTransaction(User user, AddTransactionRequestDto request) {
