@@ -45,4 +45,9 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<Map<String, String>> handleCategoryNotFound(CategoryNotFoundException ex) {
 		return ResponseEntity.badRequest().body(Map.of("notFound", ex.getMessage()));
 	}
+	
+	@ExceptionHandler(TransactionNotFoundException.class)
+	public ResponseEntity<Map<String, String>> handleTransactionNotFound(TransactionNotFoundException ex) {
+		return ResponseEntity.badRequest().body(Map.of("notFound", ex.getMessage()));
+	}
 }
