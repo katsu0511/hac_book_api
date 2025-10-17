@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +31,12 @@ public class TransactionController {
 	public ResponseEntity<List<TransactionResponseDto>> getTransactions(Principal principal) {
 		User user = authService.getUser(principal);
 		return ResponseEntity.ok(transactionService.getTransactions(user));
+	}
+	
+	@GetMapping("/transactions/{id}")
+	public ResponseEntity<TransactionResponseDto> getTransaction(Principal principal, @PathVariable("id") Long id) {
+		User user = authService.getUser(principal);
+		return ResponseEntity.ok(transactionService.getTransaction(user, id));
 	}
 	
 	@PostMapping("/transactions")
