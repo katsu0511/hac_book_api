@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.haradakatsuya190511.dtos.AddTransactionRequestDto;
 import com.haradakatsuya190511.dtos.TransactionResponseDto;
+import com.haradakatsuya190511.dtos.shared.TransactionRequest;
 import com.haradakatsuya190511.entities.Category;
 import com.haradakatsuya190511.entities.Transaction;
 import com.haradakatsuya190511.entities.User;
@@ -39,6 +40,11 @@ public class TransactionService {
 	
 	public TransactionResponseDto createTransaction(User user, AddTransactionRequestDto request) {
 		Transaction transaction = new Transaction(user);
+		applyTransactionInfo(transaction, request);
+		return new TransactionResponseDto(transactionRepository.save(transaction));
+	}
+	
+	private void applyTransactionInfo(Transaction transaction, TransactionRequest request) {
 		Long categoryId = request.getCategoryId();
 		Category category = categoryRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
 		transaction.setCategory(category);
@@ -46,6 +52,5 @@ public class TransactionService {
 		transaction.setCurrency(request.getCurrency());
 		transaction.setDescription(request.getDescription());
 		transaction.setTransactionDate(request.getTransactionDate());
-		return new TransactionResponseDto(transactionRepository.save(transaction));
 	}
 }
