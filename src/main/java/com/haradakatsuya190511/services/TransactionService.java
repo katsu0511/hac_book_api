@@ -54,6 +54,14 @@ public class TransactionService {
 		return new TransactionResponseDto(transactionRepository.save(transaction));
 	}
 	
+	public boolean deleteTransaction(User user, Long id) {
+		Transaction transaction = transactionRepository.findById(id)
+				.filter(t -> t.getUser().getId().equals(user.getId()))
+				.orElseThrow(TransactionNotFoundException::new);
+		transactionRepository.delete(transaction);
+		return true;
+	}
+	
 	private void applyTransactionInfo(Transaction transaction, TransactionRequest request) {
 		Long categoryId = request.getCategoryId();
 		Category category = categoryRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
