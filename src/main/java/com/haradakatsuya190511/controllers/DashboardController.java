@@ -26,7 +26,7 @@ public class DashboardController {
 	DashboardService dashboardService;
 	
 	@GetMapping("/summary")
-	public ResponseEntity<Map<String, String>> getSummary(
+	public ResponseEntity<Map<String, Object>> getSummary(
 			@RequestParam("start") LocalDate start,
 			@RequestParam("end") LocalDate end,
 			Principal principal
@@ -34,8 +34,10 @@ public class DashboardController {
 		User user = authService.getUser(principal);
 		return ResponseEntity.ok(
 			Map.of(
-				"income", dashboardService.getTotalIncome(user.getId(), start, end),
-				"expense", dashboardService.getTotalExpense(user.getId(), start, end)
+				"income", dashboardService.getTotalIncome(user, start, end),
+				"expense", dashboardService.getTotalExpense(user, start, end),
+				"incomeBreakdown", dashboardService.getIncomeBreakdown(user, start, end),
+				"expenseBreakdown", dashboardService.getExpenseBreakdown(user, start, end)
 			)
 		);
 	}
