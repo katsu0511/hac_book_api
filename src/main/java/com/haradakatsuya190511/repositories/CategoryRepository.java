@@ -20,7 +20,13 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 	@Query("SELECT c FROM Category c WHERE (c.user = :user OR c.user IS NULL) AND c.type = 'EXPENSE'")
 	List<Category> findExpenseByUserOrDefault(@Param("user") User user);
 	
-	@Query("SELECT c FROM Category c WHERE (c.user = :user OR c.user IS NULL) AND c.parentCategory IS NULL")
+	@Query("""
+		SELECT c
+		FROM Category c
+		WHERE (c.user = :user OR c.user IS NULL)
+			AND c.parentCategory IS NULL
+		ORDER BY c.id ASC
+	""")
 	List<Category> findParentCategoriesByUserOrDefault(@Param("user") User user);
 	
 	Optional<Category> findById(Long id);
