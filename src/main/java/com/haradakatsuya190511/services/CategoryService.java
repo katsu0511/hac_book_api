@@ -1,5 +1,6 @@
 package com.haradakatsuya190511.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +23,19 @@ public class CategoryService {
 	CategoryRepository categoryRepository;
 	
 	public List<CategoryResponseDto> getIncomeCategories(User user) {
-		return categoryRepository.findIncomeByUserOrDefault(user).stream()
-			.map(CategoryResponseDto::new)
-			.toList();
+		List<CategoryResponseDto> result = new ArrayList<>();
+		result.addAll(categoryRepository.findDefaultIncomeCategories().stream().map(CategoryResponseDto::new).toList());
+		result.addAll(categoryRepository.findUserIncomeCategories(user).stream().map(CategoryResponseDto::new).toList());
+		result.addAll(categoryRepository.findOthersIncomeCategory().stream().map(CategoryResponseDto::new).toList());
+		return result;
 	}
 	
 	public List<CategoryResponseDto> getExpenseCategories(User user) {
-		return categoryRepository.findExpenseByUserOrDefault(user).stream()
-			.map(CategoryResponseDto::new)
-			.toList();
+		List<CategoryResponseDto> result = new ArrayList<>();
+		result.addAll(categoryRepository.findDefaultExpenseCategories().stream().map(CategoryResponseDto::new).toList());
+		result.addAll(categoryRepository.findUserExpenseCategories(user).stream().map(CategoryResponseDto::new).toList());
+		result.addAll(categoryRepository.findOthersExpenseCategory().stream().map(CategoryResponseDto::new).toList());
+		return result;
 	}
 	
 	public List<CategoryResponseDto> getParentCategories(User user) {
