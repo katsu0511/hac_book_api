@@ -2,6 +2,8 @@ package com.haradakatsuya190511.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,9 +41,17 @@ public class CategoryService {
 	}
 	
 	public List<CategoryResponseDto> getParentCategories(User user) {
-		return categoryRepository.findParentCategoriesByUserOrDefault(user).stream()
-			.map(CategoryResponseDto::new)
-			.toList();
+		List<CategoryResponseDto> expenses = sort(
+			categoryRepository.findParentExpenseCategories(user).stream()
+				.map(CategoryResponseDto::new)
+				.collect(Collectors.toCollection(ArrayList::new))
+		);
+		List<CategoryResponseDto> incomes = sort(
+			categoryRepository.findParentIncomeCategories(user).stream()
+				.map(CategoryResponseDto::new)
+				.collect(Collectors.toCollection(ArrayList::new))
+		);
+		return Stream.concat(expenses.stream(), incomes.stream()).toList();
 	}
 	
 	public CategoryResponseDto getCategory(User user, Long id) {
@@ -78,5 +88,13 @@ public class CategoryService {
 		category.setName(request.getName());
 		category.setType(request.getType());
 		category.setDescription(request.getDescription());
+	}
+	
+	private List<CategoryResponseDto> sort(List<CategoryResponseDto> list) {
+		final String OTHERS = "Others";
+		return Stream.concat(
+			list.stream().filter(c -> !c.getName().equals(OTHERS)),
+			list.stream().filter(c -> c.getName().equals(OTHERS))
+		).toList();
 	}
 }
