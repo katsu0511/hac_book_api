@@ -42,9 +42,14 @@ public class CategoryController {
 	}
 	
 	@GetMapping("/parent-categories")
-	public ResponseEntity<List<CategoryResponseDto>> getParentCategories(Principal principal) {
+	public ResponseEntity<Map<String, List<CategoryResponseDto>>> getParentCategories(Principal principal) {
 		User user = authService.getUser(principal);
-		return ResponseEntity.ok(categoryService.getParentCategories(user));
+		return ResponseEntity.ok(
+			Map.of(
+				"expense", categoryService.getParentExpenseCategories(user),
+				"income", categoryService.getParentIncomeCategories(user)
+			)
+		);
 	}
 	
 	@GetMapping("/categories/{id}")
