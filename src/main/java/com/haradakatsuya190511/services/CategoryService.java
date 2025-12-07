@@ -1,7 +1,9 @@
 package com.haradakatsuya190511.services;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,34 +26,30 @@ public class CategoryService {
 	@Autowired
 	CategoryRepository categoryRepository;
 	
-	public List<CategoryResponseDto> getIncomeCategories(User user) {
-		List<CategoryResponseDto> result = new ArrayList<>();
-		result.addAll(categoryRepository.findDefaultIncomeCategories().stream().map(CategoryResponseDto::new).toList());
-		result.addAll(categoryRepository.findUserIncomeCategories(user).stream().map(CategoryResponseDto::new).toList());
-		result.addAll(categoryRepository.findOthersIncomeCategory().stream().map(CategoryResponseDto::new).toList());
-		return result;
-	}
-	
 	public List<CategoryResponseDto> getExpenseCategories(User user) {
-		List<CategoryResponseDto> result = new ArrayList<>();
-		result.addAll(categoryRepository.findDefaultExpenseCategories().stream().map(CategoryResponseDto::new).toList());
-		result.addAll(categoryRepository.findUserExpenseCategories(user).stream().map(CategoryResponseDto::new).toList());
-		result.addAll(categoryRepository.findOthersExpenseCategory().stream().map(CategoryResponseDto::new).toList());
-		return result;
+		List<CategoryResponseDto> expenseParents = getParentExpenseCategories(user);
+		List<CategoryResponseDto> expenseChildren = getChildrenExpenseCategories(user);
+		return sortCategories(expenseParents, expenseChildren);
 	}
 	
-	public List<CategoryResponseDto> getParentCategories(User user) {
-		List<CategoryResponseDto> expenses = sort(
-			categoryRepository.findParentExpenseCategories(user).stream()
+	public List<CategoryResponseDto> getIncomeCategories(User user) {
+		List<CategoryResponseDto> incomeParents = getParentIncomeCategories(user);
+		List<CategoryResponseDto> incomeChildren = getChildrenIncomeCategories(user);
+		return sortCategories(incomeParents, incomeChildren);
+	}
+	
+	public List<CategoryResponseDto> getParentExpenseCategories(User user) {
+		return sortParents(categoryRepository.findParentExpenseCategories(user).stream()
 				.map(CategoryResponseDto::new)
 				.collect(Collectors.toCollection(ArrayList::new))
 		);
-		List<CategoryResponseDto> incomes = sort(
-			categoryRepository.findParentIncomeCategories(user).stream()
+	}
+	
+	public List<CategoryResponseDto> getParentIncomeCategories(User user) {
+		return sortParents(categoryRepository.findParentIncomeCategories(user).stream()
 				.map(CategoryResponseDto::new)
 				.collect(Collectors.toCollection(ArrayList::new))
 		);
-		return Stream.concat(expenses.stream(), incomes.stream()).toList();
 	}
 	
 	public CategoryResponseDto getCategory(User user, Long id) {
@@ -75,6 +73,39 @@ public class CategoryService {
 		return new CategoryResponseDto(categoryRepository.save(category));
 	}
 	
+	private List<CategoryResponseDto> getChildrenExpenseCategories(User user) {
+		return categoryRepository.findChildExpenseCategories(user).stream()
+			.map(CategoryResponseDto::new)
+			.collect(Collectors.toCollection(ArrayList::new));
+	}
+	
+	private List<CategoryResponseDto> getChildrenIncomeCategories(User user) {
+		return categoryRepository.findChildIncomeCategories(user).stream()
+			.map(CategoryResponseDto::new)
+			.collect(Collectors.toCollection(ArrayList::new));
+	}
+	
+	private List<CategoryResponseDto> sortParents(List<CategoryResponseDto> list) {
+		final String OTHERS = "Others";
+		return Stream.concat(
+			list.stream().filter(c -> !c.getName().equals(OTHERS)),
+			list.stream().filter(c -> c.getName().equals(OTHERS))
+		).toList();
+	}
+	
+	private List<CategoryResponseDto> sortCategories(List<CategoryResponseDto> parents, List<CategoryResponseDto> children) {
+		Map<Long, List<CategoryResponseDto>> parentToChildrenMap = children.stream()
+			.collect(Collectors.groupingBy(CategoryResponseDto::getParentId));
+		
+		List<CategoryResponseDto> sortedCategories = new ArrayList<>();
+		for (CategoryResponseDto p : parents) {
+			sortedCategories.add(p);
+			List<CategoryResponseDto> childrenForParent = parentToChildrenMap.getOrDefault(p.getId(), Collections.emptyList());
+			sortedCategories.addAll(childrenForParent);
+		}
+		return sortedCategories;
+	}
+	
 	private void applyCategoryInfo(Category category, User user, CategoryRequest request) {
 		Long parentId = request.getParentId();
 		Category parent = parentId == null ? null : categoryRepository.findById(parentId).orElseThrow(CategoryNotFoundException::new);
@@ -88,13 +119,5 @@ public class CategoryService {
 		category.setName(request.getName());
 		category.setType(request.getType());
 		category.setDescription(request.getDescription());
-	}
-	
-	private List<CategoryResponseDto> sort(List<CategoryResponseDto> list) {
-		final String OTHERS = "Others";
-		return Stream.concat(
-			list.stream().filter(c -> !c.getName().equals(OTHERS)),
-			list.stream().filter(c -> c.getName().equals(OTHERS))
-		).toList();
 	}
 }
