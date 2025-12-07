@@ -35,8 +35,8 @@ public class CategoryController {
 		User user = authService.getUser(principal);
 		return ResponseEntity.ok(
 			Map.of(
-				"income", categoryService.getIncomeCategories(user),
-				"expense", categoryService.getExpenseCategories(user)
+				"expense", categoryService.getExpenseCategories(user),
+				"income", categoryService.getIncomeCategories(user)
 			)
 		);
 	}
