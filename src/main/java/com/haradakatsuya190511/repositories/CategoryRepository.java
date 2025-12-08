@@ -17,6 +17,22 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 	
 	@Query("""
 		SELECT c FROM Category c
+		WHERE c.user IS NULL
+		AND c.type = 'EXPENSE'
+		ORDER BY c.id ASC
+	""")
+	List<Category> findDefaultExpenseCategories();
+	
+	@Query("""
+		SELECT c FROM Category c
+		WHERE c.user IS NULL
+		AND c.type = 'INCOME'
+		ORDER BY c.id ASC
+	""")
+	List<Category> findDefaultIncomeCategories();
+	
+	@Query("""
+		SELECT c FROM Category c
 		WHERE (c.user = :user OR c.user IS NULL)
 		AND c.parentCategory IS NULL
 		AND c.type = 'EXPENSE'
