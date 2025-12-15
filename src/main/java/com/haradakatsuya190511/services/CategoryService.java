@@ -26,6 +26,18 @@ public class CategoryService {
 	@Autowired
 	CategoryRepository categoryRepository;
 	
+	public List<CategoryResponseDto> getDefaultExpenseCategories() {
+		return categoryRepository.findDefaultExpenseCategories().stream()
+			.map(CategoryResponseDto::new)
+			.toList();
+	}
+	
+	public List<CategoryResponseDto> getDefaultIncomeCategories() {
+		return categoryRepository.findDefaultIncomeCategories().stream()
+			.map(CategoryResponseDto::new)
+			.toList();
+	}
+	
 	public List<CategoryResponseDto> getExpenseCategories(User user) {
 		List<CategoryResponseDto> expenseParents = getParentExpenseCategories(user);
 		List<CategoryResponseDto> expenseChildren = getChildrenExpenseCategories(user);
@@ -40,15 +52,15 @@ public class CategoryService {
 	
 	public List<CategoryResponseDto> getParentExpenseCategories(User user) {
 		return sortParents(categoryRepository.findParentExpenseCategories(user).stream()
-				.map(CategoryResponseDto::new)
-				.collect(Collectors.toCollection(ArrayList::new))
+			.map(CategoryResponseDto::new)
+			.collect(Collectors.toCollection(ArrayList::new))
 		);
 	}
 	
 	public List<CategoryResponseDto> getParentIncomeCategories(User user) {
 		return sortParents(categoryRepository.findParentIncomeCategories(user).stream()
-				.map(CategoryResponseDto::new)
-				.collect(Collectors.toCollection(ArrayList::new))
+			.map(CategoryResponseDto::new)
+			.collect(Collectors.toCollection(ArrayList::new))
 		);
 	}
 	
