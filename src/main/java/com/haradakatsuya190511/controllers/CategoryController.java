@@ -58,6 +58,20 @@ public class CategoryController {
 		return ResponseEntity.ok(categoryService.getCategory(user, id));
 	}
 	
+	@GetMapping("/categories/{id}/edit")
+	public ResponseEntity<Map<String, Object>> getCategoryForEdit(Principal principal, @PathVariable("id") Long id) {
+		User user = authService.getUser(principal);
+		return ResponseEntity.ok(
+			Map.of(
+				"category", categoryService.getCategory(user, id),
+				"categories", Map.of(
+					"expense", categoryService.getParentExpenseCategories(user),
+					"income", categoryService.getParentIncomeCategories(user)
+				)
+			)
+		);
+	}
+	
 	@PostMapping("/categories")
 	public ResponseEntity<CategoryResponseDto> createCategory(Principal principal, @RequestBody AddCategoryRequestDto request) {
 		User user = authService.getUser(principal);
