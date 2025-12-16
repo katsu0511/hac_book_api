@@ -24,17 +24,17 @@ public class DashboardService {
 	CategoryService categoryService;
 	
 	public String getTotalExpense(User user, LocalDate start, LocalDate end) {
-		return transactionRepository.getTotalExpenseInPeriod(user, start, end);
+		return transactionRepository.findTotalExpenseInPeriod(user, start, end);
 	}
 	
 	public String getTotalIncome(User user, LocalDate start, LocalDate end) {
-		return transactionRepository.getTotalIncomeInPeriod(user, start, end);
+		return transactionRepository.findTotalIncomeInPeriod(user, start, end);
 	}
 	
 	public Map<String, String> getExpenseBreakdown(User user, LocalDate start, LocalDate end) {
 		List<CategoryResponseDto> defaultCategories = categoryService.getDefaultExpenseCategories();
 		Map<String, String> map = getBreakdown(defaultCategories, user, start, end);
-		BigDecimal others = transactionRepository.getTotalExpenseByUserCategoryInPeriod(user, start, end);
+		BigDecimal others = transactionRepository.findTotalExpenseByCategoryInPeriod(user, start, end);
 		BigDecimal existingOthers = new BigDecimal(map.getOrDefault("Others", "0.00"));
 		map.put("Others", existingOthers.add(others).toString());
 		return map;
@@ -43,7 +43,7 @@ public class DashboardService {
 	public Map<String, String> getIncomeBreakdown(User user, LocalDate start, LocalDate end) {
 		List<CategoryResponseDto> defaultCategories = categoryService.getDefaultIncomeCategories();
 		Map<String, String> map = getBreakdown(defaultCategories, user, start, end);
-		BigDecimal others = transactionRepository.getTotalIncomeByUserCategoryInPeriod(user, start, end);
+		BigDecimal others = transactionRepository.findTotalIncomeByCategoryInPeriod(user, start, end);
 		BigDecimal existingOthers = new BigDecimal(map.getOrDefault("Others", "0.00"));
 		map.put("Others", existingOthers.add(others).toString());
 		return map;

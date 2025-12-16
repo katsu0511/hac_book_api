@@ -22,7 +22,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 		AND t.category.type = 'EXPENSE'
 		AND t.transactionDate BETWEEN :start AND :end
 	""")
-	String getTotalExpenseInPeriod(
+	String findTotalExpenseInPeriod(
 		@Param("user") User user,
 		@Param("start") LocalDate start,
 		@Param("end") LocalDate end
@@ -34,7 +34,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 		AND t.category.type = 'INCOME'
 		AND t.transactionDate BETWEEN :start AND :end
 	""")
-	String getTotalIncomeInPeriod(
+	String findTotalIncomeInPeriod(
 		@Param("user") User user,
 		@Param("start") LocalDate start,
 		@Param("end") LocalDate end
@@ -63,7 +63,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 		AND c.type = 'EXPENSE'
 		AND t.transactionDate BETWEEN :start AND :end
 	""")
-	BigDecimal getTotalExpenseByUserAndCategoryInPeriod(
+	BigDecimal findTotalExpenseByCategoryInPeriod(
 		@Param("user") User user,
 		@Param("start") LocalDate start,
 		@Param("end") LocalDate end
@@ -79,7 +79,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 		AND c.type = 'INCOME'
 		AND t.transactionDate BETWEEN :start AND :end
 	""")
-	BigDecimal getTotalIncomeByUserAndCategoryInPeriod(
+	BigDecimal findTotalIncomeByCategoryInPeriod(
 		@Param("user") User user,
 		@Param("start") LocalDate start,
 		@Param("end") LocalDate end
