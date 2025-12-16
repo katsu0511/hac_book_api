@@ -2,6 +2,7 @@ package com.haradakatsuya190511.controllers;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,17 +28,22 @@ public class DashboardController {
 	
 	@GetMapping("/summary")
 	public ResponseEntity<Map<String, Object>> getSummary(
-			@RequestParam("start") LocalDate start,
-			@RequestParam("end") LocalDate end,
+			@RequestParam(value = "start", required = false) LocalDate start,
+			@RequestParam(value = "end", required = false) LocalDate end,
 			Principal principal
 	) {
 		User user = authService.getUser(principal);
+		if (start == null || end == null) {
+			YearMonth thisMonth = YearMonth.now();
+			start = thisMonth.atDay(1);
+			end = thisMonth.atEndOfMonth();
+		}
 		return ResponseEntity.ok(
 			Map.of(
-				"income", dashboardService.getTotalIncome(user, start, end),
 				"expense", dashboardService.getTotalExpense(user, start, end),
-				"incomeBreakdown", dashboardService.getIncomeBreakdown(user, start, end),
-				"expenseBreakdown", dashboardService.getExpenseBreakdown(user, start, end)
+				"income", dashboardService.getTotalIncome(user, start, end),
+				"expenseBreakdown", dashboardService.getExpenseBreakdown(user, start, end),
+				"incomeBreakdown", dashboardService.getIncomeBreakdown(user, start, end)
 			)
 		);
 	}
