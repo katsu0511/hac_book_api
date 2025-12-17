@@ -1,6 +1,11 @@
 package com.haradakatsuya190511.services;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +17,7 @@ import com.haradakatsuya190511.dtos.shared.CategoryRequest;
 import com.haradakatsuya190511.entities.Category;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.exceptions.CategoryNotFoundException;
+import com.haradakatsuya190511.exceptions.InvalidParentCategoryException;
 import com.haradakatsuya190511.repositories.CategoryRepository;
 
 @Service
@@ -20,22 +26,42 @@ public class CategoryService {
 	@Autowired
 	CategoryRepository categoryRepository;
 	
-	public List<CategoryResponseDto> getIncomeCategories(User user) {
-		return categoryRepository.findIncomeByUserOrDefault(user).stream()
+	public List<CategoryResponseDto> getDefaultExpenseCategories() {
+		return categoryRepository.findDefaultExpenseCategories().stream()
+			.map(CategoryResponseDto::new)
+			.toList();
+	}
+	
+	public List<CategoryResponseDto> getDefaultIncomeCategories() {
+		return categoryRepository.findDefaultIncomeCategories().stream()
 			.map(CategoryResponseDto::new)
 			.toList();
 	}
 	
 	public List<CategoryResponseDto> getExpenseCategories(User user) {
-		return categoryRepository.findExpenseByUserOrDefault(user).stream()
-			.map(CategoryResponseDto::new)
-			.toList();
+		List<CategoryResponseDto> expenseParents = getParentExpenseCategories(user);
+		List<CategoryResponseDto> expenseChildren = getChildrenExpenseCategories(user);
+		return sortCategories(expenseParents, expenseChildren);
 	}
 	
-	public List<CategoryResponseDto> getParentCategories(User user) {
-		return categoryRepository.findParentCategoriesByUserOrDefault(user).stream()
+	public List<CategoryResponseDto> getIncomeCategories(User user) {
+		List<CategoryResponseDto> incomeParents = getParentIncomeCategories(user);
+		List<CategoryResponseDto> incomeChildren = getChildrenIncomeCategories(user);
+		return sortCategories(incomeParents, incomeChildren);
+	}
+	
+	public List<CategoryResponseDto> getParentExpenseCategories(User user) {
+		return sortParents(categoryRepository.findParentExpenseCategories(user).stream()
 			.map(CategoryResponseDto::new)
-			.toList();
+			.collect(Collectors.toCollection(ArrayList::new))
+		);
+	}
+	
+	public List<CategoryResponseDto> getParentIncomeCategories(User user) {
+		return sortParents(categoryRepository.findParentIncomeCategories(user).stream()
+			.map(CategoryResponseDto::new)
+			.collect(Collectors.toCollection(ArrayList::new))
+		);
 	}
 	
 	public CategoryResponseDto getCategory(User user, Long id) {
@@ -47,23 +73,61 @@ public class CategoryService {
 	
 	public CategoryResponseDto createCategory(User user, AddCategoryRequestDto request) {
 		Category category = new Category(user);
-		applyCategoryInfo(category, request);
+		applyCategoryInfo(category, user, request);
 		return new CategoryResponseDto(categoryRepository.save(category));
 	}
 	
 	public CategoryResponseDto updateCategory(User user, Long id, ModifyCategoryRequestDto request) {
 		Category category = categoryRepository.findById(id)
-				.filter(c -> c.getId().equals(request.getId()))
 				.filter(c -> c.getUser().getId().equals(user.getId()))
 				.orElseThrow(CategoryNotFoundException::new);
-		applyCategoryInfo(category, request);
+		applyCategoryInfo(category, user, request);
 		return new CategoryResponseDto(categoryRepository.save(category));
 	}
 	
-	private void applyCategoryInfo(Category category, CategoryRequest request) {
+	private List<CategoryResponseDto> getChildrenExpenseCategories(User user) {
+		return categoryRepository.findChildExpenseCategories(user).stream()
+			.map(CategoryResponseDto::new)
+			.collect(Collectors.toCollection(ArrayList::new));
+	}
+	
+	private List<CategoryResponseDto> getChildrenIncomeCategories(User user) {
+		return categoryRepository.findChildIncomeCategories(user).stream()
+			.map(CategoryResponseDto::new)
+			.collect(Collectors.toCollection(ArrayList::new));
+	}
+	
+	private List<CategoryResponseDto> sortParents(List<CategoryResponseDto> list) {
+		final String OTHERS = "Others";
+		return Stream.concat(
+			list.stream().filter(c -> !c.getName().equals(OTHERS)),
+			list.stream().filter(c -> c.getName().equals(OTHERS))
+		).toList();
+	}
+	
+	private List<CategoryResponseDto> sortCategories(List<CategoryResponseDto> parents, List<CategoryResponseDto> children) {
+		Map<Long, List<CategoryResponseDto>> parentToChildrenMap = children.stream()
+			.collect(Collectors.groupingBy(CategoryResponseDto::getParentId));
+		
+		List<CategoryResponseDto> sortedCategories = new ArrayList<>();
+		for (CategoryResponseDto p : parents) {
+			sortedCategories.add(p);
+			List<CategoryResponseDto> childrenForParent = parentToChildrenMap.getOrDefault(p.getId(), Collections.emptyList());
+			sortedCategories.addAll(childrenForParent);
+		}
+		return sortedCategories;
+	}
+	
+	private void applyCategoryInfo(Category category, User user, CategoryRequest request) {
 		Long parentId = request.getParentId();
-		Category parentCategory = parentId == null ? null : categoryRepository.findById(parentId).orElseThrow(CategoryNotFoundException::new);
-		category.setParentCategory(parentCategory);
+		Category parent = parentId == null ? null : categoryRepository.findById(parentId).orElseThrow(CategoryNotFoundException::new);
+		if (parent != null) {
+			boolean isDefault = parent.getUser() == null;
+			boolean isUserOwned = parent.getUser() != null && parent.getUser().getId().equals(user.getId());
+			boolean isTopLevel = parent.getParentCategory() == null;
+			if (!(isDefault || (isUserOwned && isTopLevel))) throw new InvalidParentCategoryException();
+		}
+		category.setParentCategory(parent);
 		category.setName(request.getName());
 		category.setType(request.getType());
 		category.setDescription(request.getDescription());

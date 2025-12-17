@@ -35,22 +35,41 @@ public class CategoryController {
 		User user = authService.getUser(principal);
 		return ResponseEntity.ok(
 			Map.of(
-				"income", categoryService.getIncomeCategories(user),
-				"expense", categoryService.getExpenseCategories(user)
+				"expense", categoryService.getExpenseCategories(user),
+				"income", categoryService.getIncomeCategories(user)
 			)
 		);
 	}
 	
 	@GetMapping("/parent-categories")
-	public ResponseEntity<List<CategoryResponseDto>> getParentCategories(Principal principal) {
+	public ResponseEntity<Map<String, List<CategoryResponseDto>>> getParentCategories(Principal principal) {
 		User user = authService.getUser(principal);
-		return ResponseEntity.ok(categoryService.getParentCategories(user));
+		return ResponseEntity.ok(
+			Map.of(
+				"expense", categoryService.getParentExpenseCategories(user),
+				"income", categoryService.getParentIncomeCategories(user)
+			)
+		);
 	}
 	
 	@GetMapping("/categories/{id}")
 	public ResponseEntity<CategoryResponseDto> getCategory(Principal principal, @PathVariable("id") Long id) {
 		User user = authService.getUser(principal);
 		return ResponseEntity.ok(categoryService.getCategory(user, id));
+	}
+	
+	@GetMapping("/categories/{id}/edit")
+	public ResponseEntity<Map<String, Object>> getCategoryForEdit(Principal principal, @PathVariable("id") Long id) {
+		User user = authService.getUser(principal);
+		return ResponseEntity.ok(
+			Map.of(
+				"category", categoryService.getCategory(user, id),
+				"categories", Map.of(
+					"expense", categoryService.getParentExpenseCategories(user),
+					"income", categoryService.getParentIncomeCategories(user)
+				)
+			)
+		);
 	}
 	
 	@PostMapping("/categories")

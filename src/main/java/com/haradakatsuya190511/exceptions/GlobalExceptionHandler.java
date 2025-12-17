@@ -46,6 +46,11 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.badRequest().body(Map.of("notFound", ex.getMessage()));
 	}
 	
+	@ExceptionHandler(InvalidParentCategoryException.class)
+	public ResponseEntity<Map<String, String>> handleInvalidParentCategory(InvalidParentCategoryException ex) {
+		return ResponseEntity.badRequest().body(Map.of("invalid", ex.getMessage()));
+	}
+	
 	@ExceptionHandler(TransactionNotFoundException.class)
 	public ResponseEntity<Map<String, String>> handleTransactionNotFound(TransactionNotFoundException ex) {
 		return ResponseEntity.badRequest().body(Map.of("notFound", ex.getMessage()));

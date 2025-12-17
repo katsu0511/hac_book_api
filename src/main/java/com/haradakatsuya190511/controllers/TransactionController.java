@@ -2,6 +2,7 @@ package com.haradakatsuya190511.controllers;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import com.haradakatsuya190511.dtos.ModifyTransactionRequestDto;
 import com.haradakatsuya190511.dtos.TransactionResponseDto;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.services.AuthService;
+import com.haradakatsuya190511.services.CategoryService;
 import com.haradakatsuya190511.services.TransactionService;
 
 @RestController
@@ -26,6 +28,9 @@ public class TransactionController {
 	
 	@Autowired
 	AuthService authService;
+	
+	@Autowired
+	CategoryService categoryService;
 	
 	@Autowired
 	TransactionService transactionService;
@@ -40,6 +45,20 @@ public class TransactionController {
 	public ResponseEntity<TransactionResponseDto> getTransaction(Principal principal, @PathVariable("id") Long id) {
 		User user = authService.getUser(principal);
 		return ResponseEntity.ok(transactionService.getTransaction(user, id));
+	}
+	
+	@GetMapping("/transactions/{id}/edit")
+	public ResponseEntity<Map<String, Object>> getTransactionForEdit(Principal principal, @PathVariable("id") Long id) {
+		User user = authService.getUser(principal);
+		return ResponseEntity.ok(
+			Map.of(
+				"transaction", transactionService.getTransaction(user, id),
+				"categories", Map.of(
+					"expense", categoryService.getExpenseCategories(user),
+					"income", categoryService.getIncomeCategories(user)
+				)
+			)
+		);
 	}
 	
 	@PostMapping("/transactions")
