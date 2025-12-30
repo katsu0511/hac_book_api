@@ -71,6 +71,12 @@ public class CategoryService {
 			.orElseThrow(CategoryNotFoundException::new);
 	}
 	
+	public String getCategoryName(User user, Long id) {
+		return categoryRepository.findById(id)
+			.map(Category::getName)
+			.orElseThrow(CategoryNotFoundException::new);
+	}
+	
 	public CategoryResponseDto createCategory(User user, AddCategoryRequestDto request) {
 		Category category = new Category(user);
 		applyCategoryInfo(category, user, request);
