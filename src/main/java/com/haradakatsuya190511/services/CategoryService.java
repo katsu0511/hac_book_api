@@ -66,7 +66,7 @@ public class CategoryService {
 	
 	public CategoryResponseDto getCategory(User user, Long id) {
 		return categoryRepository.findById(id)
-			.filter(c -> c.getUser().getId().equals(user.getId()))
+			.filter(c -> c.getUser() != null && c.getUser().getId().equals(user.getId()))
 			.map(CategoryResponseDto::new)
 			.orElseThrow(CategoryNotFoundException::new);
 	}
