@@ -40,13 +40,13 @@ public class CategoryService {
 	
 	public List<CategoryResponseDto> getExpenseCategories(User user) {
 		List<CategoryResponseDto> expenseParents = getParentExpenseCategories(user);
-		List<CategoryResponseDto> expenseChildren = getChildrenExpenseCategories(user);
+		List<CategoryResponseDto> expenseChildren = getChildExpenseCategories(user);
 		return sortCategories(expenseParents, expenseChildren);
 	}
 	
 	public List<CategoryResponseDto> getIncomeCategories(User user) {
 		List<CategoryResponseDto> incomeParents = getParentIncomeCategories(user);
-		List<CategoryResponseDto> incomeChildren = getChildrenIncomeCategories(user);
+		List<CategoryResponseDto> incomeChildren = getChildIncomeCategories(user);
 		return sortCategories(incomeParents, incomeChildren);
 	}
 	
@@ -66,8 +66,14 @@ public class CategoryService {
 	
 	public CategoryResponseDto getCategory(User user, Long id) {
 		return categoryRepository.findById(id)
-			.filter(c -> c.getUser().getId().equals(user.getId()))
+			.filter(c -> c.getUser() != null && c.getUser().getId().equals(user.getId()))
 			.map(CategoryResponseDto::new)
+			.orElseThrow(CategoryNotFoundException::new);
+	}
+	
+	public String getCategoryName(User user, Long id) {
+		return categoryRepository.findById(id)
+			.map(Category::getName)
 			.orElseThrow(CategoryNotFoundException::new);
 	}
 	
@@ -85,13 +91,13 @@ public class CategoryService {
 		return new CategoryResponseDto(categoryRepository.save(category));
 	}
 	
-	private List<CategoryResponseDto> getChildrenExpenseCategories(User user) {
+	private List<CategoryResponseDto> getChildExpenseCategories(User user) {
 		return categoryRepository.findChildExpenseCategories(user).stream()
 			.map(CategoryResponseDto::new)
 			.collect(Collectors.toCollection(ArrayList::new));
 	}
 	
-	private List<CategoryResponseDto> getChildrenIncomeCategories(User user) {
+	private List<CategoryResponseDto> getChildIncomeCategories(User user) {
 		return categoryRepository.findChildIncomeCategories(user).stream()
 			.map(CategoryResponseDto::new)
 			.collect(Collectors.toCollection(ArrayList::new));

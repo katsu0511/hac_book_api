@@ -53,9 +53,16 @@ public class CategoryController {
 	}
 	
 	@GetMapping("/categories/{id}")
-	public ResponseEntity<CategoryResponseDto> getCategory(Principal principal, @PathVariable("id") Long id) {
+	public ResponseEntity<Map<String, Object>> getCategory(Principal principal, @PathVariable("id") Long id) {
 		User user = authService.getUser(principal);
-		return ResponseEntity.ok(categoryService.getCategory(user, id));
+		CategoryResponseDto category = categoryService.getCategory(user, id);
+		String parentName = category.getParentId() == null ? "" : categoryService.getCategoryName(user, category.getParentId());
+		return ResponseEntity.ok(
+			Map.of(
+				"category", category,
+				"parent", parentName
+			)
+		);
 	}
 	
 	@GetMapping("/categories/{id}/edit")
