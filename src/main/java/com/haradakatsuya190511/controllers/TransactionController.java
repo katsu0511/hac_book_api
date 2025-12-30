@@ -42,9 +42,16 @@ public class TransactionController {
 	}
 	
 	@GetMapping("/transactions/{id}")
-	public ResponseEntity<TransactionResponseDto> getTransaction(Principal principal, @PathVariable("id") Long id) {
+	public ResponseEntity<Map<String, Object>> getTransaction(Principal principal, @PathVariable("id") Long id) {
 		User user = authService.getUser(principal);
-		return ResponseEntity.ok(transactionService.getTransaction(user, id));
+		TransactionResponseDto transaction = transactionService.getTransaction(user, id);
+		String categoryName = categoryService.getCategoryName(user, transaction.getCategoryId());
+		return ResponseEntity.ok(
+			Map.of(
+				"transaction", transaction,
+				"category", categoryName
+			)
+		);
 	}
 	
 	@GetMapping("/transactions/{id}/edit")
