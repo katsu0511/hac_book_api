@@ -1,6 +1,7 @@
 package com.haradakatsuya190511.controllers;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.haradakatsuya190511.dtos.AddTransactionRequestDto;
@@ -36,9 +38,13 @@ public class TransactionController {
 	TransactionService transactionService;
 	
 	@GetMapping("/transactions")
-	public ResponseEntity<List<TransactionResponseDto>> getTransactions(Principal principal) {
+	public ResponseEntity<List<TransactionResponseDto>> getTransactions(
+		Principal principal,
+		@RequestParam(value = "start", required = false) LocalDate start,
+		@RequestParam(value = "end", required = false) LocalDate end
+	) {
 		User user = authService.getUser(principal);
-		return ResponseEntity.ok(transactionService.getTransactions(user));
+		return ResponseEntity.ok(transactionService.getTransactionsInPeriod(user, start, end));
 	}
 	
 	@GetMapping("/transactions/{id}")

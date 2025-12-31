@@ -43,23 +43,16 @@ public class AuthService {
 	
 	public void login(User user, HttpServletResponse response) {
 		String jwt = jwtUtil.generateToken(user);
-		Cookie cookie = new Cookie("token", jwt);
-		cookie.setHttpOnly(true);
-//		cookie.setSecure(true);
-		cookie.setPath("/");
-		cookie.setMaxAge(3600);
+		int maxAge = 3600;
+		Cookie cookie = createTokenCookie(jwt, maxAge);
 		response.addCookie(cookie);
 	}
 	
-	public void logout(Cookie cookie, HttpServletResponse response) {
-		if (cookie != null) {
-			cookie.setHttpOnly(true);
-//			token.setSecure(true);
-			cookie.setPath("/");
-			cookie.setMaxAge(0);
-			cookie.setValue("");
-			response.addCookie(cookie);
-		}
+	public void logout(HttpServletResponse response) {
+		String jwt = "";
+		int maxAge = 0;
+		Cookie cookie = createTokenCookie(jwt, maxAge);
+		response.addCookie(cookie);
 	}
 	
 	@Transactional
@@ -70,6 +63,15 @@ public class AuthService {
 		User savedUser = userRepository.save(user);
 		settingRepository.save(new Setting(savedUser));
 		return savedUser;
+	}
+	
+	private Cookie createTokenCookie(String jwt, int maxAge) {
+		Cookie cookie = new Cookie("token", jwt);
+		cookie.setHttpOnly(true);
+//		cookie.setSecure(true);
+		cookie.setPath("/");
+		cookie.setMaxAge(maxAge);
+		return cookie;
 	}
 	
 	public void checkEmailNotExists(String email) {

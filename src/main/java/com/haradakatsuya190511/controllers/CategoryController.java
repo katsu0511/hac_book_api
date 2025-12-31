@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.haradakatsuya190511.dtos.AddCategoryRequestDto;
+import com.haradakatsuya190511.dtos.CategoryDetailResponseDto;
 import com.haradakatsuya190511.dtos.CategoryResponseDto;
 import com.haradakatsuya190511.dtos.ModifyCategoryRequestDto;
 import com.haradakatsuya190511.entities.User;
@@ -53,16 +54,9 @@ public class CategoryController {
 	}
 	
 	@GetMapping("/categories/{id}")
-	public ResponseEntity<Map<String, Object>> getCategory(Principal principal, @PathVariable("id") Long id) {
+	public ResponseEntity<CategoryDetailResponseDto> getCategory(Principal principal, @PathVariable("id") Long id) {
 		User user = authService.getUser(principal);
-		CategoryResponseDto category = categoryService.getCategory(user, id);
-		String parentName = category.getParentId() == null ? "" : categoryService.getCategoryName(user, category.getParentId());
-		return ResponseEntity.ok(
-			Map.of(
-				"category", category,
-				"parent", parentName
-			)
-		);
+		return ResponseEntity.ok(categoryService.getCategoryDetail(user, id));
 	}
 	
 	@GetMapping("/categories/{id}/edit")

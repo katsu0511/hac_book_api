@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.haradakatsuya190511.dtos.AddCategoryRequestDto;
+import com.haradakatsuya190511.dtos.CategoryDetailResponseDto;
 import com.haradakatsuya190511.dtos.CategoryResponseDto;
 import com.haradakatsuya190511.dtos.ModifyCategoryRequestDto;
 import com.haradakatsuya190511.dtos.shared.CategoryRequest;
@@ -75,6 +76,13 @@ public class CategoryService {
 		return categoryRepository.findById(id)
 			.map(Category::getName)
 			.orElseThrow(CategoryNotFoundException::new);
+	}
+	
+	public CategoryDetailResponseDto getCategoryDetail(User user, Long id) {
+		CategoryResponseDto category = getCategory(user, id);
+		String parentName = null;
+		if (category.getParentId() != null) parentName = getCategoryName(user, category.getParentId());
+		return new CategoryDetailResponseDto(category, parentName);
 	}
 	
 	public CategoryResponseDto createCategory(User user, AddCategoryRequestDto request) {

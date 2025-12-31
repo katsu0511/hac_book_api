@@ -1,5 +1,7 @@
 package com.haradakatsuya190511.services;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +28,19 @@ public class TransactionService {
 	@Autowired
 	CategoryRepository categoryRepository;
 	
-	public List<TransactionResponseDto> getTransactions(User user) {
-		return transactionRepository.findByUser(user).stream()
+	public List<TransactionResponseDto> getTransactionsInPeriod(User user, LocalDate start, LocalDate end) {
+		if (start == null || end == null) {
+			YearMonth thisMonth = YearMonth.now();
+			start = thisMonth.atDay(1);
+			end = thisMonth.atEndOfMonth();
+		}
+		return transactionRepository.findAllWithCategoryInPeriod(user, start, end).stream()
 			.map(TransactionResponseDto::new)
 			.toList();
 	}
 	
 	public TransactionResponseDto getTransaction(User user, Long id) {
-		return transactionRepository.findById(id)
-			.filter(t -> t.getUser().getId().equals(user.getId()))
+		return transactionRepository.findByIdWithCategory(user, id)
 			.map(TransactionResponseDto::new)
 			.orElseThrow(TransactionNotFoundException::new);
 	}
@@ -46,18 +52,15 @@ public class TransactionService {
 	}
 	
 	public TransactionResponseDto updateTransaction(User user, Long id, ModifyTransactionRequestDto request) {
-		Transaction transaction = transactionRepository.findById(id)
-				.filter(t -> t.getId().equals(request.getId()))
-				.filter(t -> t.getUser().getId().equals(user.getId()))
-				.orElseThrow(TransactionNotFoundException::new);
+		Transaction transaction = transactionRepository.findByIdWithCategory(user, id)
+			.orElseThrow(TransactionNotFoundException::new);
 		applyTransactionInfo(transaction, request);
 		return new TransactionResponseDto(transactionRepository.save(transaction));
 	}
 	
 	public boolean deleteTransaction(User user, Long id) {
-		Transaction transaction = transactionRepository.findById(id)
-				.filter(t -> t.getUser().getId().equals(user.getId()))
-				.orElseThrow(TransactionNotFoundException::new);
+		Transaction transaction = transactionRepository.findByIdWithCategory(user, id)
+			.orElseThrow(TransactionNotFoundException::new);
 		transactionRepository.delete(transaction);
 		return true;
 	}
