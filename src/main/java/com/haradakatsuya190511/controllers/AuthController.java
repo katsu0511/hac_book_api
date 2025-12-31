@@ -19,7 +19,6 @@ import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.services.AuthService;
 import com.haradakatsuya190511.services.TokenService;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -48,9 +47,8 @@ public class AuthController {
 	}
 	
 	@PostMapping("/logout")
-	public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
-		Cookie tokenCookie = tokenService.getTokenCookie(request);
-		authService.logout(tokenCookie, response);
+	public ResponseEntity<?> logout(HttpServletResponse response) {
+		authService.logout(response);
 		return ResponseEntity.noContent().build();
 	}
 	
