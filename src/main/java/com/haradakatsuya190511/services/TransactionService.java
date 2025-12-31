@@ -1,5 +1,7 @@
 package com.haradakatsuya190511.services;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +28,13 @@ public class TransactionService {
 	@Autowired
 	CategoryRepository categoryRepository;
 	
-	public List<TransactionResponseDto> getTransactions(User user) {
-		return transactionRepository.findAllWithCategory(user).stream()
+	public List<TransactionResponseDto> getTransactionsInPeriod(User user, LocalDate start, LocalDate end) {
+		if (start == null || end == null) {
+			YearMonth thisMonth = YearMonth.now();
+			start = thisMonth.atDay(1);
+			end = thisMonth.atEndOfMonth();
+		}
+		return transactionRepository.findAllWithCategoryInPeriod(user, start, end).stream()
 			.map(TransactionResponseDto::new)
 			.toList();
 	}
