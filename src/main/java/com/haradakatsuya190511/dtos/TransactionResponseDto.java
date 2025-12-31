@@ -5,11 +5,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.haradakatsuya190511.entities.Transaction;
+import com.haradakatsuya190511.enums.CategoryType;
 
 public class TransactionResponseDto {
 	private Long id;
 	private Long userId;
 	private Long categoryId;
+	private String categoryName;
+	private CategoryType categoryType;
 	private BigDecimal amount;
 	private String currency;
 	private String description;
@@ -21,6 +24,8 @@ public class TransactionResponseDto {
 		this.id = transaction.getId();
 		this.userId = transaction.getUser().getId();
 		this.categoryId = transaction.getCategory().getId();
+		this.categoryName = transaction.getCategory().getName();
+		this.categoryType = transaction.getCategory().getType();
 		this.amount = transaction.getAmount();
 		this.currency = transaction.getCurrency();
 		this.description = transaction.getDescription();
@@ -39,6 +44,14 @@ public class TransactionResponseDto {
 	
 	public Long getCategoryId() {
 		return categoryId;
+	}
+	
+	public String getCategoryName() {
+		return categoryName;
+	}
+	
+	public CategoryType getCategoryType() {
+		return categoryType;
 	}
 	
 	public BigDecimal getAmount() {
