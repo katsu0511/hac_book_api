@@ -84,7 +84,18 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 		@Param("start") LocalDate start,
 		@Param("end") LocalDate end
 	);
-
-	Optional<Transaction> findById(Long id);
-	List<Transaction> findByUser(User user);
+	
+	@Query("""
+		SELECT t FROM Transaction t
+		JOIN FETCH t.category
+		WHERE t.user = :user
+	""")
+	List<Transaction> findAllWithCategory(@Param("user") User user);
+	
+	@Query("""
+		SELECT t FROM Transaction t
+		JOIN FETCH t.category
+		WHERE t.id = :id AND t.user = :user
+	""")
+	Optional<Transaction> findByIdWithCategory(@Param("user") User user, @Param("id") Long id);
 }
