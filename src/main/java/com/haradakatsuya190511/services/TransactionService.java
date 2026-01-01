@@ -55,7 +55,9 @@ public class TransactionService {
 		Transaction transaction = transactionRepository.findByIdWithCategory(user, id)
 			.orElseThrow(TransactionNotFoundException::new);
 		applyTransactionInfo(transaction, request);
-		return new TransactionResponseDto(transactionRepository.save(transaction));
+		TransactionResponseDto dto = new TransactionResponseDto(transaction);
+		transactionRepository.save(transaction);
+		return dto;
 	}
 	
 	public boolean deleteTransaction(User user, Long id) {
