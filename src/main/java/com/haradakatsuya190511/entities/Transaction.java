@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -48,6 +50,7 @@ public class Transaction {
 	@Column(insertable = false, updatable = false)
 	private LocalDateTime createdAt;
 	
+	@UpdateTimestamp
 	@Column(insertable = false)
 	private LocalDateTime updatedAt;
 	
