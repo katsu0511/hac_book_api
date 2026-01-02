@@ -14,7 +14,7 @@ public class TomcatConfig {
 		return factory -> factory.addContextCustomizers(context -> {
 			Rfc6265CookieProcessor cookieProcessor = new Rfc6265CookieProcessor();
 			cookieProcessor.setSameSiteCookies("Strict");
-//			cookieProcessor.setSameSiteCookies("Lax");
+//			cookieProcessor.setSameSiteCookies("None");
 			context.setCookieProcessor(cookieProcessor);
 		});
 	}
