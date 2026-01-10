@@ -1,9 +1,9 @@
-package com.haradakatsuya190511.dtos;
+package com.haradakatsuya190511.dtos.transaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.haradakatsuya190511.dtos.shared.TransactionRequest;
+import com.haradakatsuya190511.dtos.transaction.shared.TransactionRequest;
 
 public class ModifyTransactionRequestDto implements TransactionRequest {
 	private Long id;
