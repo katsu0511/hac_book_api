@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.haradakatsuya190511.dtos.AddTransactionRequestDto;
-import com.haradakatsuya190511.dtos.ModifyTransactionRequestDto;
-import com.haradakatsuya190511.dtos.TransactionResponseDto;
+import com.haradakatsuya190511.dtos.transaction.AddTransactionRequestDto;
+import com.haradakatsuya190511.dtos.transaction.ModifyTransactionRequestDto;
+import com.haradakatsuya190511.dtos.transaction.TransactionResponseDto;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.services.AuthService;
 import com.haradakatsuya190511.services.CategoryService;
