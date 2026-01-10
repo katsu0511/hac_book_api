@@ -2,13 +2,12 @@ package com.haradakatsuya190511.services;
 
 import java.security.Principal;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.haradakatsuya190511.dtos.SignupRequestDto;
+import com.haradakatsuya190511.dtos.auth.SignupRequestDto;
 import com.haradakatsuya190511.entities.Setting;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.exceptions.LoginFailedException;
@@ -17,23 +16,20 @@ import com.haradakatsuya190511.repositories.SettingRepository;
 import com.haradakatsuya190511.repositories.UserRepository;
 import com.haradakatsuya190511.utils.JwtUtil;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
-
 @Service
 public class AuthService {
 	
-	@Autowired
-	UserRepository userRepository;
+	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
+	private final JwtUtil jwtUtil;
+	private final SettingRepository settingRepository;
 	
-	@Autowired
-	PasswordEncoder passwordEncoder;
-	
-	@Autowired
-	JwtUtil jwtUtil;
-	
-	@Autowired
-	SettingRepository settingRepository;
+	public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, SettingRepository settingRepository) {
+		this.userRepository = userRepository;
+		this.passwordEncoder = passwordEncoder;
+		this.jwtUtil = jwtUtil;
+		this.settingRepository = settingRepository;
+	}
 	
 	public User authenticate(String email, String password) {
 		return userRepository.findByEmail(email)
@@ -41,18 +37,8 @@ public class AuthService {
 				.orElseThrow(LoginFailedException::new);
     }
 	
-	public void login(User user, HttpServletResponse response) {
-		String jwt = jwtUtil.generateToken(user);
-		int maxAge = 3600;
-		Cookie cookie = createTokenCookie(jwt, maxAge);
-		response.addCookie(cookie);
-	}
-	
-	public void logout(HttpServletResponse response) {
-		String jwt = "";
-		int maxAge = 0;
-		Cookie cookie = createTokenCookie(jwt, maxAge);
-		response.addCookie(cookie);
+	public String generateToken(User user) {
+		return jwtUtil.generateToken(user);
 	}
 	
 	@Transactional
@@ -65,15 +51,6 @@ public class AuthService {
 		return savedUser;
 	}
 	
-	private Cookie createTokenCookie(String jwt, int maxAge) {
-		Cookie cookie = new Cookie("token", jwt);
-		cookie.setHttpOnly(true);
-//		cookie.setSecure(true);
-		cookie.setPath("/");
-		cookie.setMaxAge(maxAge);
-		return cookie;
-	}
-	
 	public void checkEmailNotExists(String email) {
 		userRepository.findByEmail(email).ifPresent(user -> {
 			throw new SignupFailedException();
@@ -82,8 +59,7 @@ public class AuthService {
 	
 	public User getUser(Principal principal) {
 		String email = principal.getName();
-		User user = userRepository.findByEmail(email)
-	                  .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-		return user;
+		return userRepository.findByEmail(email)
+			.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 	}
 }
