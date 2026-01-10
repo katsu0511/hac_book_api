@@ -1,4 +1,4 @@
-package com.haradakatsuya190511.dtos;
+package com.haradakatsuya190511.dtos.category;
 
 public class CategoryDetailResponseDto {
 	private CategoryResponseDto category;
