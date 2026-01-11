@@ -4,7 +4,6 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,11 +24,13 @@ import com.haradakatsuya190511.services.CategoryService;
 @RestController
 public class CategoryController {
 	
-	@Autowired
-	AuthService authService;
+	private final AuthService authService;
+	private final CategoryService categoryService;
 	
-	@Autowired
-	CategoryService categoryService;
+	public CategoryController(AuthService authService, CategoryService categoryService) {
+		this.authService = authService;
+		this.categoryService = categoryService;
+	}
 	
 	@GetMapping("/categories")
 	public ResponseEntity<Map<String, List<CategoryResponseDto>>> getCategories(Principal principal) {

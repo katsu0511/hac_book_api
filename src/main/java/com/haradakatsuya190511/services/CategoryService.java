@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.haradakatsuya190511.dtos.category.AddCategoryRequestDto;
@@ -24,8 +23,11 @@ import com.haradakatsuya190511.repositories.CategoryRepository;
 @Service
 public class CategoryService {
 	
-	@Autowired
-	CategoryRepository categoryRepository;
+	private final CategoryRepository categoryRepository;
+	
+	public CategoryService(CategoryRepository categoryRepository) {
+		this.categoryRepository = categoryRepository;
+	}
 	
 	public List<CategoryResponseDto> getDefaultExpenseCategories() {
 		return categoryRepository.findDefaultExpenseCategories().stream()
