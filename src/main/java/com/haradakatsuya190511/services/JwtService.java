@@ -1,55 +1,42 @@
 package com.haradakatsuya190511.services;
 
-import java.io.IOException;
+import java.time.Instant;
 import java.util.Date;
+import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.haradakatsuya190511.utils.JwtUtil;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import jakarta.servlet.http.HttpServletResponse;
 
 @Service
 public class JwtService {
 	
-	@Autowired
-	JwtUtil jwtUtil;
+	private final JwtUtil jwtUtil;
+	private final CustomUserDetailsService userDetailsService;
 	
-	public void checkJwts(String token, HttpServletResponse response) throws IOException {
-		try {
-			Jwts.parser()
-				.verifyWith(jwtUtil.getSecretKey())
-				.build()
-				.parseSignedClaims(token);
-		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
-		}
+	public JwtService(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
+		this.jwtUtil = jwtUtil;
+		this.userDetailsService = userDetailsService;
 	}
 	
-	public boolean validateToken(String token) {
+	public Optional<UserDetails> getUserDetailsIfValid(String token) {
 		try {
-			Jws<Claims> claimsJws = Jwts.parser()
+			Claims claims = Jwts.parser()
 				.verifyWith(jwtUtil.getSecretKey())
 				.build()
-				.parseSignedClaims(token);
-			Claims claims = claimsJws.getPayload();
+				.parseSignedClaims(token)
+				.getPayload();
 			Date expiration = claims.getExpiration();
-			return expiration != null && expiration.after(new Date());
+			if (expiration != null && expiration.toInstant().isAfter(Instant.now())) {
+				return Optional.of(userDetailsService.loadUserByUsername(claims.getSubject()));
+			}
+			return Optional.empty();
 		} catch (Exception e) {
-			return false;
+			return Optional.empty();
 		}
-	}
-	
-	public String extractEmail(String token) {
-		Claims claims = Jwts.parser()
-			.verifyWith(jwtUtil.getSecretKey())
-			.build()
-			.parseSignedClaims(token)
-			.getPayload();
-		return claims.getSubject();
 	}
 }

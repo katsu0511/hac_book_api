@@ -10,11 +10,11 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.haradakatsuya190511.dtos.AddCategoryRequestDto;
-import com.haradakatsuya190511.dtos.CategoryDetailResponseDto;
-import com.haradakatsuya190511.dtos.CategoryResponseDto;
-import com.haradakatsuya190511.dtos.ModifyCategoryRequestDto;
-import com.haradakatsuya190511.dtos.shared.CategoryRequest;
+import com.haradakatsuya190511.dtos.category.AddCategoryRequestDto;
+import com.haradakatsuya190511.dtos.category.CategoryDetailResponseDto;
+import com.haradakatsuya190511.dtos.category.CategoryResponseDto;
+import com.haradakatsuya190511.dtos.category.ModifyCategoryRequestDto;
+import com.haradakatsuya190511.dtos.category.shared.CategoryRequest;
 import com.haradakatsuya190511.entities.Category;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.exceptions.CategoryNotFoundException;

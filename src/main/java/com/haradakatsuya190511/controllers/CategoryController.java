@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.haradakatsuya190511.dtos.AddCategoryRequestDto;
-import com.haradakatsuya190511.dtos.CategoryDetailResponseDto;
-import com.haradakatsuya190511.dtos.CategoryResponseDto;
-import com.haradakatsuya190511.dtos.ModifyCategoryRequestDto;
+import com.haradakatsuya190511.dtos.category.AddCategoryRequestDto;
+import com.haradakatsuya190511.dtos.category.CategoryDetailResponseDto;
+import com.haradakatsuya190511.dtos.category.CategoryResponseDto;
+import com.haradakatsuya190511.dtos.category.ModifyCategoryRequestDto;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.services.AuthService;
 import com.haradakatsuya190511.services.CategoryService;

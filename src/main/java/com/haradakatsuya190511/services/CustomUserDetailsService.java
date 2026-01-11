@@ -1,6 +1,5 @@
 package com.haradakatsuya190511.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,8 +11,11 @@ import com.haradakatsuya190511.repositories.UserRepository;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 	
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
+	
+	public CustomUserDetailsService(UserRepository userRepository) {
+		this.userRepository = userRepository;
+	}
 	
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

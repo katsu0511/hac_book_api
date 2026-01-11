@@ -1,4 +1,4 @@
-package com.haradakatsuya190511.dtos.shared;
+package com.haradakatsuya190511.dtos.category.shared;
 
 import com.haradakatsuya190511.enums.CategoryType;
 

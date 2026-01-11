@@ -1,18 +1,17 @@
 package com.haradakatsuya190511.filters;
 
 import java.io.IOException;
+import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.haradakatsuya190511.services.JwtService;
 import com.haradakatsuya190511.services.TokenService;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -22,35 +21,31 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	
-	@Autowired
-	private TokenService tokenService;
+	private final TokenService tokenService;
+	private final JwtService jwtService;
 	
-	@Autowired
-	private JwtService jwtService;
-	
-	@Autowired
-	private UserDetailsService userDetailsService;
+	public JwtAuthenticationFilter(TokenService tokenService, JwtService jwtService) {
+		this.tokenService = tokenService;
+		this.jwtService = jwtService;
+	}
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		
-		Cookie tokenCookie = tokenService.getTokenCookie(request);
-		String token = null;
-		if (tokenCookie != null) {
-			token = tokenCookie.getValue();
+		if (SecurityContextHolder.getContext().getAuthentication() != null) {
+			filterChain.doFilter(request, response);
+			return;
 		}
 		
-		try {
-			if (token != null && jwtService.validateToken(token)) {
-				String email = jwtService.extractEmail(token);
-				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+		Cookie tokenCookie = tokenService.getTokenCookie(request);
+		String token = Optional.ofNullable(tokenCookie).map(Cookie::getValue).orElse(null);
+		
+		if (token != null) {
+			jwtService.getUserDetailsIfValid(token).ifPresent(user -> {
+				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 				SecurityContextHolder.getContext().setAuthentication(authToken);
-			}
-		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT token");
-			return;
+			});
 		}
 		
 		filterChain.doFilter(request, response);

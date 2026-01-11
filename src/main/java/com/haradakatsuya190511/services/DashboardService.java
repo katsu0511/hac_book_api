@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.haradakatsuya190511.dtos.CategoryResponseDto;
+import com.haradakatsuya190511.dtos.category.CategoryResponseDto;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.repositories.TransactionRepository;
 

@@ -1,4 +1,4 @@
-package com.haradakatsuya190511.dtos;
+package com.haradakatsuya190511.dtos.auth;
 
 import com.haradakatsuya190511.validations.Password;
 

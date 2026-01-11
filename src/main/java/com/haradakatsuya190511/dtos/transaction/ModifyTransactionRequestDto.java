@@ -1,17 +1,26 @@
-package com.haradakatsuya190511.dtos;
+package com.haradakatsuya190511.dtos.transaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.haradakatsuya190511.dtos.shared.TransactionRequest;
+import com.haradakatsuya190511.dtos.transaction.shared.TransactionRequest;
 
-public class AddTransactionRequestDto implements TransactionRequest {
+public class ModifyTransactionRequestDto implements TransactionRequest {
+	private Long id;
 	private Long userId;
 	private Long categoryId;
 	private BigDecimal amount;
 	private String currency;
 	private String description;
 	private LocalDate transactionDate;
+	
+	public Long getId() {
+		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
 	
 	public Long getUserId() {
 		return userId;

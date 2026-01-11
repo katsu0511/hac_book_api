@@ -7,10 +7,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.haradakatsuya190511.dtos.AddTransactionRequestDto;
-import com.haradakatsuya190511.dtos.ModifyTransactionRequestDto;
-import com.haradakatsuya190511.dtos.TransactionResponseDto;
-import com.haradakatsuya190511.dtos.shared.TransactionRequest;
+import com.haradakatsuya190511.dtos.transaction.AddTransactionRequestDto;
+import com.haradakatsuya190511.dtos.transaction.ModifyTransactionRequestDto;
+import com.haradakatsuya190511.dtos.transaction.TransactionResponseDto;
+import com.haradakatsuya190511.dtos.transaction.shared.TransactionRequest;
 import com.haradakatsuya190511.entities.Category;
 import com.haradakatsuya190511.entities.Transaction;
 import com.haradakatsuya190511.entities.User;

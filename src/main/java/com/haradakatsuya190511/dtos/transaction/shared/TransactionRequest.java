@@ -1,4 +1,4 @@
-package com.haradakatsuya190511.dtos.shared;
+package com.haradakatsuya190511.dtos.transaction.shared;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

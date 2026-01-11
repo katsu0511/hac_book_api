@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import com.haradakatsuya190511.config.JwtSecretProperties;
 import com.haradakatsuya190511.entities.User;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
@@ -32,14 +31,6 @@ public class JwtUtil {
 			.expiration(new Date(System.currentTimeMillis() + expirationMs))
 			.signWith(secretKey)
 			.compact();
-	}
-	
-	public Claims validateToken(String token) {
-		return Jwts.parser()
-			.verifyWith(secretKey)
-			.build()
-			.parseSignedClaims(token)
-			.getPayload();
 	}
 	
 	public SecretKey getSecretKey() {
