@@ -5,7 +5,7 @@ public class TransactionNotFoundException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 	
 	public TransactionNotFoundException() {
-		super("transaction not found");
+		super("Transaction not found.");
 	}
 	
 	public TransactionNotFoundException(String message) {

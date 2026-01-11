@@ -11,7 +11,7 @@ import com.haradakatsuya190511.dtos.auth.SignupRequestDto;
 import com.haradakatsuya190511.entities.Setting;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.exceptions.LoginFailedException;
-import com.haradakatsuya190511.exceptions.SignupFailedException;
+import com.haradakatsuya190511.exceptions.EmailAlreadyUsedException;
 import com.haradakatsuya190511.repositories.SettingRepository;
 import com.haradakatsuya190511.repositories.UserRepository;
 import com.haradakatsuya190511.utils.JwtUtil;
@@ -53,13 +53,13 @@ public class AuthService {
 	
 	public void checkEmailNotExists(String email) {
 		userRepository.findByEmail(email).ifPresent(user -> {
-			throw new SignupFailedException();
+			throw new EmailAlreadyUsedException();
 		});
 	}
 	
 	public User getUser(Principal principal) {
 		String email = principal.getName();
 		return userRepository.findByEmail(email)
-			.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+			.orElseThrow(() -> new UsernameNotFoundException("User not found."));
 	}
 }

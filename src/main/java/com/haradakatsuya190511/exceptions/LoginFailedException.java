@@ -5,7 +5,7 @@ public class LoginFailedException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 	
 	public LoginFailedException() {
-		super("failed to login");
+		super("Failed to login.");
 	}
 	
 	public LoginFailedException(String message) {
