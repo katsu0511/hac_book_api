@@ -72,5 +72,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 	List<Category> findChildIncomeCategories(@Param("user") User user);
 	
 	@EntityGraph(attributePaths = {"parentCategory"})
-	Optional<Category> findById(Long id);
+	Optional<Category> findWithParentById(Long id);
 }
