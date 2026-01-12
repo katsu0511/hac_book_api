@@ -2,7 +2,6 @@ package com.haradakatsuya190511.config;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,11 +22,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 @EnableWebSecurity
 public class SecurityConfig {
 	
-	@Autowired
-	CorsProperties corsProperties;
+	private final CorsProperties corsProperties;
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	
-	@Autowired
-	JwtAuthenticationFilter jwtAuthenticationFilter;
+	public SecurityConfig(CorsProperties corsProperties, JwtAuthenticationFilter jwtAuthenticationFilter) {
+		this.corsProperties = corsProperties;
+		this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+	}
 	
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
