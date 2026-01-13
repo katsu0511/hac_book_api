@@ -1,14 +1,14 @@
 package com.haradakatsuya190511.exceptions;
 
-public class InvalidParentCategoryException extends RuntimeException {
+public class InvalidCategoryException extends RuntimeException {
 	
 	private static final long serialVersionUID = 1L;
 	
-	public InvalidParentCategoryException() {
-		super("Invalid parent category.");
+	public InvalidCategoryException() {
+		super("Invalid category.");
 	}
 	
-	public InvalidParentCategoryException(String message) {
+	public InvalidCategoryException(String message) {
 		super(message);
 	}
 }
