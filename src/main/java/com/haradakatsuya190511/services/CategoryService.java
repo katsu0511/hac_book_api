@@ -17,7 +17,7 @@ import com.haradakatsuya190511.dtos.category.shared.CategoryRequest;
 import com.haradakatsuya190511.entities.Category;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.exceptions.CategoryNotFoundException;
-import com.haradakatsuya190511.exceptions.InvalidParentCategoryException;
+import com.haradakatsuya190511.exceptions.InvalidCategoryException;
 import com.haradakatsuya190511.repositories.CategoryRepository;
 
 @Service
@@ -143,7 +143,7 @@ public class CategoryService {
 			boolean isDefault = parent.getUser() == null;
 			boolean isUserOwned = parent.getUser() != null && parent.getUser().getId().equals(user.getId());
 			boolean isTopLevel = parent.getParentCategory() == null;
-			if (!(isDefault || (isUserOwned && isTopLevel))) throw new InvalidParentCategoryException();
+			if (!(isDefault || (isUserOwned && isTopLevel))) throw new InvalidCategoryException();
 		}
 		category.setParentCategory(parent);
 		category.setName(request.getName());
