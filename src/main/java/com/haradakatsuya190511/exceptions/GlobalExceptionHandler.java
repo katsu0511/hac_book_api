@@ -35,8 +35,8 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.badRequest().body(new ErrorResponseDto(ex.getMessage()));
 	}
 	
-	@ExceptionHandler(InvalidParentCategoryException.class)
-	public ResponseEntity<ErrorResponseDto> handleInvalidParentCategory(InvalidParentCategoryException ex) {
+	@ExceptionHandler(InvalidCategoryException.class)
+	public ResponseEntity<ErrorResponseDto> handleInvalidCategory(InvalidCategoryException ex) {
 		return ResponseEntity.badRequest().body(new ErrorResponseDto(ex.getMessage()));
 	}
 	
