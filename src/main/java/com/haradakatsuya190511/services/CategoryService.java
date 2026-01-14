@@ -16,6 +16,7 @@ import com.haradakatsuya190511.dtos.category.UpdateCategoryRequestDto;
 import com.haradakatsuya190511.dtos.category.shared.CategoryRequest;
 import com.haradakatsuya190511.entities.Category;
 import com.haradakatsuya190511.entities.User;
+import com.haradakatsuya190511.enums.CategoryType;
 import com.haradakatsuya190511.exceptions.CategoryNotFoundException;
 import com.haradakatsuya190511.exceptions.InvalidCategoryException;
 import com.haradakatsuya190511.repositories.CategoryRepository;
@@ -29,42 +30,20 @@ public class CategoryService {
 		this.categoryRepository = categoryRepository;
 	}
 	
-	public List<CategoryResponseDto> getDefaultExpenseCategories() {
-		return categoryRepository.findDefaultExpenseCategories().stream()
-			.map(CategoryResponseDto::new)
-			.toList();
-	}
-	
-	public List<CategoryResponseDto> getDefaultIncomeCategories() {
-		return categoryRepository.findDefaultIncomeCategories().stream()
-			.map(CategoryResponseDto::new)
-			.toList();
-	}
-	
 	public List<CategoryResponseDto> getExpenseCategories(User user) {
-		List<CategoryResponseDto> expenseParents = getParentExpenseCategories(user);
-		List<CategoryResponseDto> expenseChildren = getChildExpenseCategories(user);
-		return sortCategories(expenseParents, expenseChildren);
+		return getCategoriesByCategoryType(user, CategoryType.EXPENSE);
 	}
 	
 	public List<CategoryResponseDto> getIncomeCategories(User user) {
-		List<CategoryResponseDto> incomeParents = getParentIncomeCategories(user);
-		List<CategoryResponseDto> incomeChildren = getChildIncomeCategories(user);
-		return sortCategories(incomeParents, incomeChildren);
+		return getCategoriesByCategoryType(user, CategoryType.INCOME);
 	}
 	
 	public List<CategoryResponseDto> getParentExpenseCategories(User user) {
-		return sortParentCategories(categoryRepository.findParentExpenseCategories(user).stream()
-			.map(CategoryResponseDto::new)
-			.collect(Collectors.toCollection(ArrayList::new))
-		);
+		return getParentCategoriesByCategoryType(user, CategoryType.EXPENSE);
 	}
 	
 	public List<CategoryResponseDto> getParentIncomeCategories(User user) {
-		return sortParentCategories(categoryRepository.findParentIncomeCategories(user).stream()
-			.map(CategoryResponseDto::new)
-			.collect(Collectors.toCollection(ArrayList::new))
-		);
+		return getParentCategoriesByCategoryType(user, CategoryType.INCOME);
 	}
 	
 	public CategoryResponseDto getCategory(User user, Long id) {
@@ -103,14 +82,21 @@ public class CategoryService {
 			.orElseThrow(CategoryNotFoundException::new);
 	}
 	
-	private List<CategoryResponseDto> getChildExpenseCategories(User user) {
-		return categoryRepository.findChildExpenseCategories(user).stream()
-			.map(CategoryResponseDto::new)
-			.collect(Collectors.toCollection(ArrayList::new));
+	private List<CategoryResponseDto> getCategoriesByCategoryType(User user, CategoryType type) {
+		List<CategoryResponseDto> parents = getParentCategoriesByCategoryType(user, type);
+		List<CategoryResponseDto> children = getChildCategoriesByCategoryType(user, type);
+		return sortCategories(parents, children);
 	}
 	
-	private List<CategoryResponseDto> getChildIncomeCategories(User user) {
-		return categoryRepository.findChildIncomeCategories(user).stream()
+	private List<CategoryResponseDto> getParentCategoriesByCategoryType(User user, CategoryType type) {
+		return sortParentCategories(categoryRepository.findParentCategories(user, type).stream()
+			.map(CategoryResponseDto::new)
+			.collect(Collectors.toCollection(ArrayList::new))
+		);
+	}
+	
+	private List<CategoryResponseDto> getChildCategoriesByCategoryType(User user, CategoryType type) {
+		return categoryRepository.findChildCategories(user, type).stream()
 			.map(CategoryResponseDto::new)
 			.collect(Collectors.toCollection(ArrayList::new));
 	}
