@@ -2,59 +2,62 @@ package com.haradakatsuya190511.services;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
+import java.time.YearMonth;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.haradakatsuya190511.dtos.category.CategoryResponseDto;
+import com.haradakatsuya190511.dtos.summary.ExpenseBreakdownDto;
+import com.haradakatsuya190511.dtos.summary.SummaryResponseDto;
 import com.haradakatsuya190511.entities.User;
+import com.haradakatsuya190511.enums.CategoryType;
 import com.haradakatsuya190511.repositories.TransactionRepository;
 
 @Service
 public class DashboardService {
 	
-	@Autowired
-	TransactionRepository transactionRepository;
+	private final TransactionRepository transactionRepository;
+	private final CategoryService categoryService;
 	
-	@Autowired
-	CategoryService categoryService;
-	
-	public String getTotalExpense(User user, LocalDate start, LocalDate end) {
-		return transactionRepository.findTotalExpenseInPeriod(user, start, end);
+	public DashboardService(TransactionRepository transactionRepository, CategoryService categoryService) {
+		this.transactionRepository = transactionRepository;
+		this.categoryService = categoryService;
 	}
 	
-	public String getTotalIncome(User user, LocalDate start, LocalDate end) {
-		return transactionRepository.findTotalIncomeInPeriod(user, start, end);
+	public SummaryResponseDto getSummary(User user, LocalDate start, LocalDate end) {
+		if (start == null || end == null) {
+			YearMonth thisMonth = YearMonth.now();
+			start = thisMonth.atDay(1);
+			end = thisMonth.atEndOfMonth();
+		}
+		return new SummaryResponseDto(getTotalExpense(user, start, end), getTotalIncome(user, start, end), getExpenseBreakdown(user, start, end));
 	}
 	
-	public Map<String, String> getExpenseBreakdown(User user, LocalDate start, LocalDate end) {
-		List<CategoryResponseDto> defaultCategories = categoryService.getDefaultExpenseCategories();
-		Map<String, String> map = getBreakdown(defaultCategories, user, start, end);
-		BigDecimal others = transactionRepository.findTotalExpenseByCategoryInPeriod(user, start, end);
-		BigDecimal existingOthers = new BigDecimal(map.getOrDefault("Others", "0.00"));
-		map.put("Others", existingOthers.add(others).toString());
-		return map;
+	private BigDecimal getTotalExpense(User user, LocalDate start, LocalDate end) {
+		return transactionRepository.findSumByCategoryTypeAndPeriod(user, CategoryType.EXPENSE, start, end);
 	}
 	
-	public Map<String, String> getIncomeBreakdown(User user, LocalDate start, LocalDate end) {
-		List<CategoryResponseDto> defaultCategories = categoryService.getDefaultIncomeCategories();
-		Map<String, String> map = getBreakdown(defaultCategories, user, start, end);
-		BigDecimal others = transactionRepository.findTotalIncomeByCategoryInPeriod(user, start, end);
-		BigDecimal existingOthers = new BigDecimal(map.getOrDefault("Others", "0.00"));
-		map.put("Others", existingOthers.add(others).toString());
-		return map;
+	private BigDecimal getTotalIncome(User user, LocalDate start, LocalDate end) {
+		return transactionRepository.findSumByCategoryTypeAndPeriod(user, CategoryType.INCOME, start, end);
 	}
 	
-	private Map<String, String> getBreakdown(List<CategoryResponseDto> categories, User user, LocalDate start, LocalDate end) {
-		return categories.stream().collect(Collectors.toMap(
-			CategoryResponseDto::getName,
-			c -> transactionRepository.findSumByCategoryAndPeriod(user, c.getId(), start, end),
-			(a, b) -> a,
-			LinkedHashMap::new
-		));
+	public List<ExpenseBreakdownDto> getExpenseBreakdown(User user, LocalDate start, LocalDate end) {
+		List<CategoryResponseDto> categories = categoryService.getExpenseCategories(user);
+		return getBreakdown(categories, user, start, end);
+	}
+	
+	private List<ExpenseBreakdownDto> getBreakdown(List<CategoryResponseDto> categories, User user, LocalDate start, LocalDate end) {
+		return categories.stream()
+			.map(c -> new ExpenseBreakdownDto(
+				c.getId(),
+				c.getName(),
+				transactionRepository.findSumByCategoryAndPeriod(user, c.getId(), start, end)
+			))
+			.filter(dto ->
+				dto.getTotal() != null &&
+				dto.getTotal().compareTo(BigDecimal.ZERO) > 0
+			)
+			.toList();
 	}
 }
