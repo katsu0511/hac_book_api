@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.haradakatsuya190511.entities.Transaction;
 import com.haradakatsuya190511.entities.User;
+import com.haradakatsuya190511.enums.CategoryType;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
@@ -19,68 +20,25 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 	@Query("""
 		SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t
 		WHERE t.user = :user
-		AND t.category.type = 'EXPENSE'
+		AND t.category.type = :type
 		AND t.transactionDate BETWEEN :start AND :end
 	""")
-	String findTotalExpenseInPeriod(
+	BigDecimal findSumByCategoryTypeAndPeriod(
 		@Param("user") User user,
+		@Param("type") CategoryType type,
 		@Param("start") LocalDate start,
 		@Param("end") LocalDate end
 	);
-
-	@Query("""
-		SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t
-		WHERE t.user = :user
-		AND t.category.type = 'INCOME'
-		AND t.transactionDate BETWEEN :start AND :end
-	""")
-	String findTotalIncomeInPeriod(
-		@Param("user") User user,
-		@Param("start") LocalDate start,
-		@Param("end") LocalDate end
-	);
-
+	
 	@Query("""
 		SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t
 		WHERE t.user = :user
 		AND (t.category.id = :categoryId OR t.category.parentCategory.id = :categoryId)
 		AND t.transactionDate BETWEEN :start AND :end
 	""")
-	String findSumByCategoryAndPeriod(
+	BigDecimal findSumByCategoryAndPeriod(
 		@Param("user") User user,
 		@Param("categoryId") Long categoryId,
-		@Param("start") LocalDate start,
-		@Param("end") LocalDate end
-	);
-
-	@Query("""
-		SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t
-		JOIN t.category c
-		LEFT JOIN c.parentCategory parent
-		WHERE t.user = :user
-		AND c.user = :user
-		AND (parent IS NULL OR parent.user = :user)
-		AND c.type = 'EXPENSE'
-		AND t.transactionDate BETWEEN :start AND :end
-	""")
-	BigDecimal findTotalExpenseByCategoryInPeriod(
-		@Param("user") User user,
-		@Param("start") LocalDate start,
-		@Param("end") LocalDate end
-	);
-
-	@Query("""
-		SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t
-		JOIN t.category c
-		LEFT JOIN c.parentCategory parent
-		WHERE t.user = :user
-		AND c.user = :user
-		AND (parent IS NULL OR parent.user = :user)
-		AND c.type = 'INCOME'
-		AND t.transactionDate BETWEEN :start AND :end
-	""")
-	BigDecimal findTotalIncomeByCategoryInPeriod(
-		@Param("user") User user,
 		@Param("start") LocalDate start,
 		@Param("end") LocalDate end
 	);
