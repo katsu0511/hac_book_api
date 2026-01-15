@@ -5,11 +5,13 @@ import java.math.BigDecimal;
 public class ExpenseBreakdownDto {
 	private Long categoryId;
 	private String categoryName;
+	private Long parentId;
 	private BigDecimal total;
 	
-	public ExpenseBreakdownDto(Long categoryId, String categoryName, BigDecimal total) {
+	public ExpenseBreakdownDto(Long categoryId, String categoryName, Long parentId, BigDecimal total) {
 		this.categoryId = categoryId;
 		this.categoryName = categoryName;
+		this.parentId = parentId;
 		this.total = total;
 	}
 	
@@ -19,6 +21,10 @@ public class ExpenseBreakdownDto {
 	
 	public String getCategoryName() {
 		return categoryName;
+	}
+	
+	public Long getParentId() {
+		return parentId;
 	}
 	
 	public BigDecimal getTotal() {
