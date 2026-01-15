@@ -47,7 +47,7 @@ public class CategoryService {
 	}
 	
 	public CategoryResponseDto getCategory(User user, Long id) {
-		return categoryRepository.findWithParentById(id)
+		return categoryRepository.findByIdWithParent(id)
 			.filter(c -> c.getUser() != null && c.getUser().getId().equals(user.getId()))
 			.map(CategoryResponseDto::new)
 			.orElseThrow(CategoryNotFoundException::new);
