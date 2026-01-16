@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.haradakatsuya190511.dtos.summary.ExpenseBreakdownDto;
 import com.haradakatsuya190511.entities.Transaction;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.enums.CategoryType;
@@ -32,9 +31,7 @@ public interface DashboardRepository extends JpaRepository<Transaction, Long> {
 	);
 	
 	@Query("""
-		SELECT new com.haradakatsuya190511.dtos.summary.ExpenseBreakdownDto(
-			c.id, c.name, c.parentCategory.id, COALESCE(SUM(t.amount), 0)
-		)
+		SELECT c.id, c.name, c.parentCategory.id, COALESCE(SUM(t.amount), 0)
 		FROM Category c
 		LEFT JOIN Transaction t
 			ON t.category = c
@@ -45,7 +42,7 @@ public interface DashboardRepository extends JpaRepository<Transaction, Long> {
 		GROUP BY c.id, c.name, c.parentCategory.id
 		ORDER BY c.id
 	""")
-	List<ExpenseBreakdownDto> findBreakdownByCategoryType(
+	List<Object[]> findBreakdownByCategoryType(
 		@Param("user") User user,
 		@Param("type") CategoryType type,
 		@Param("start") LocalDate start,
