@@ -19,6 +19,7 @@ import com.haradakatsuya190511.repositories.DashboardRepository;
 @Service
 public class DashboardService {
 	
+	private static final String OTHERS = "Others";
 	private final DashboardRepository dashboardRepository;
 	
 	public DashboardService(DashboardRepository dashboardRepository) {
@@ -43,21 +44,34 @@ public class DashboardService {
 	}
 	
 	public List<ExpenseBreakdownDto> getExpenseBreakdown(User user, LocalDate start, LocalDate end) {
-		List<ExpenseBreakdownDto> dtos = dashboardRepository.findBreakdownByCategoryType(user, CategoryType.EXPENSE, start, end);
-		return getBreakdown(dtos);
+		List<Object[]> rows = dashboardRepository.findBreakdownByCategoryType(user, CategoryType.EXPENSE, start, end);
+		return getBreakdown(rows);
 	}
 	
-	private List<ExpenseBreakdownDto> getBreakdown(List<ExpenseBreakdownDto> dtos) {
+	private List<ExpenseBreakdownDto> getBreakdown(List<Object[]> rows) {
 		Map<Long, List<ExpenseBreakdownDto>> childrenMap = new HashMap<>();
 		List<ExpenseBreakdownDto> parents = new ArrayList<>();
 		ExpenseBreakdownDto others = null;
 		
-		for (ExpenseBreakdownDto dto : dtos) {			
-			if ("Others".equals(dto.getCategoryName())) others = dto;
+		for (Object[] row : rows) {		
+			Long id = (Long) row[0];
+			String name = (String) row[1];
+			Long parentId = (Long) row[2];
+			BigDecimal sum = (BigDecimal) row[3];
+			ExpenseBreakdownDto dto = new ExpenseBreakdownDto(id, name, parentId, sum);
+			if (dto.getCategoryName().equals(OTHERS)) others = dto;
 	        else if (dto.getParentId() == null) parents.add(dto);
 	        else childrenMap.computeIfAbsent(dto.getParentId(), k -> new ArrayList<>()).add(dto);
 		}
 		
+		return flattenCategories(parents, childrenMap, others);
+	}
+	
+	private List<ExpenseBreakdownDto> flattenCategories(
+		List<ExpenseBreakdownDto> parents,
+		Map<Long, List<ExpenseBreakdownDto>> childrenMap,
+		ExpenseBreakdownDto others
+	) {
 		List<ExpenseBreakdownDto> result = new ArrayList<>();
 		for (ExpenseBreakdownDto parent : parents) {
 			result.add(parent);
