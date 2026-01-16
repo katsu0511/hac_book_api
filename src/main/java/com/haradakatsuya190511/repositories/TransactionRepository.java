@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,10 +28,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 		@Param("end") LocalDate end
 	);
 	
-	@Query("""
-		SELECT t FROM Transaction t
-		JOIN FETCH t.category
-		WHERE t.id = :id AND t.user = :user
-	""")
-	Optional<Transaction> findByIdWithCategory(@Param("user") User user, @Param("id") Long id);
+	@EntityGraph(attributePaths = {"category"})
+	Optional<Transaction> findWithCategoryByUserAndId(User user, Long id);
 }
