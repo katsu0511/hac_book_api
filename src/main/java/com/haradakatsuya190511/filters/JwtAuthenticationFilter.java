@@ -1,6 +1,7 @@
 package com.haradakatsuya190511.filters;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -41,8 +42,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String token = Optional.ofNullable(tokenCookie).map(Cookie::getValue).orElse(null);
 		
 		if (token != null) {
-			jwtService.getUserDetailsIfValid(token).ifPresent(user -> {
-				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+			jwtService.getUserIfValid(token).ifPresent(user -> {
+				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, List.of());
 				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 				SecurityContextHolder.getContext().setAuthentication(authToken);
 			});
