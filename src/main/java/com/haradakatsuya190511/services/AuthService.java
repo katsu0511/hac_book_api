@@ -1,8 +1,5 @@
 package com.haradakatsuya190511.services;
 
-import java.security.Principal;
-
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +30,8 @@ public class AuthService {
 	
 	public User authenticate(String email, String password) {
 		return userRepository.findByEmail(email)
-				.filter(user -> passwordEncoder.matches(password, user.getPassword()))
-				.orElseThrow(LoginFailedException::new);
+			.filter(user -> passwordEncoder.matches(password, user.getPassword()))
+			.orElseThrow(LoginFailedException::new);
     }
 	
 	public String generateToken(User user) {
@@ -55,11 +52,5 @@ public class AuthService {
 		userRepository.findByEmail(email).ifPresent(user -> {
 			throw new EmailAlreadyUsedException();
 		});
-	}
-	
-	public User getUser(Principal principal) {
-		String email = principal.getName();
-		return userRepository.findByEmail(email)
-			.orElseThrow(() -> new UsernameNotFoundException("User not found."));
 	}
 }

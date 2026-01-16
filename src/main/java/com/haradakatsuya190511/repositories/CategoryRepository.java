@@ -11,43 +11,19 @@ import org.springframework.stereotype.Repository;
 
 import com.haradakatsuya190511.entities.Category;
 import com.haradakatsuya190511.entities.User;
+import com.haradakatsuya190511.enums.CategoryType;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 	
 	@Query("""
 		SELECT c FROM Category c
-		WHERE c.user IS NULL
-		AND c.type = 'EXPENSE'
-		ORDER BY c.id ASC
-	""")
-	List<Category> findDefaultExpenseCategories();
-	
-	@Query("""
-		SELECT c FROM Category c
-		WHERE c.user IS NULL
-		AND c.type = 'INCOME'
-		ORDER BY c.id ASC
-	""")
-	List<Category> findDefaultIncomeCategories();
-	
-	@Query("""
-		SELECT c FROM Category c
 		WHERE (c.user = :user OR c.user IS NULL)
 		AND c.parentCategory IS NULL
-		AND c.type = 'EXPENSE'
+		AND c.type = :type
 		ORDER BY c.id ASC
 	""")
-	List<Category> findParentExpenseCategories(@Param("user") User user);
-	
-	@Query("""
-		SELECT c FROM Category c
-		WHERE (c.user = :user OR c.user IS NULL)
-		AND c.parentCategory IS NULL
-		AND c.type = 'INCOME'
-		ORDER BY c.id ASC
-	""")
-	List<Category> findParentIncomeCategories(@Param("user") User user);
+	List<Category> findParentCategories(@Param("user") User user, @Param("type") CategoryType type);
 	
 	@Query("""
 		SELECT c FROM Category c
@@ -55,21 +31,10 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 		WHERE c.user = :user
 		AND p IS NOT NULL
 		AND (p.user = :user OR p.user IS NULL)
-		AND c.type = 'EXPENSE'
+		AND c.type = :type
 		ORDER BY p.id ASC, c.id ASC
 	""")
-	List<Category> findChildExpenseCategories(@Param("user") User user);
-	
-	@Query("""
-		SELECT c FROM Category c
-		JOIN FETCH c.parentCategory p
-		WHERE c.user = :user
-		AND p IS NOT NULL
-		AND (p.user = :user OR p.user IS NULL)
-		AND c.type = 'INCOME'
-		ORDER BY p.id ASC, c.id ASC
-	""")
-	List<Category> findChildIncomeCategories(@Param("user") User user);
+	List<Category> findChildCategories(@Param("user") User user, @Param("type") CategoryType type);
 	
 	@EntityGraph(attributePaths = {"parentCategory"})
 	Optional<Category> findWithParentById(Long id);

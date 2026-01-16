@@ -4,9 +4,11 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
 
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.haradakatsuya190511.entities.User;
+import com.haradakatsuya190511.repositories.UserRepository;
 import com.haradakatsuya190511.utils.JwtUtil;
 
 import io.jsonwebtoken.Claims;
@@ -16,14 +18,14 @@ import io.jsonwebtoken.Jwts;
 public class JwtService {
 	
 	private final JwtUtil jwtUtil;
-	private final CustomUserDetailsService userDetailsService;
+	private final UserRepository userRepository;
 	
-	public JwtService(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
+	public JwtService(JwtUtil jwtUtil, UserRepository userRepository) {
 		this.jwtUtil = jwtUtil;
-		this.userDetailsService = userDetailsService;
+		this.userRepository = userRepository;
 	}
 	
-	public Optional<UserDetails> getUserDetailsIfValid(String token) {
+	public Optional<User> getUserIfValid(String token) {
 		try {
 			Claims claims = Jwts.parser()
 				.verifyWith(jwtUtil.getSecretKey())
@@ -32,7 +34,9 @@ public class JwtService {
 				.getPayload();
 			Date expiration = claims.getExpiration();
 			if (expiration != null && expiration.toInstant().isAfter(Instant.now())) {
-				return Optional.of(userDetailsService.loadUserByUsername(claims.getSubject()));
+				Long userId = Long.valueOf(claims.getSubject());
+				User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found."));
+				return Optional.of(user);
 			}
 			return Optional.empty();
 		} catch (Exception e) {

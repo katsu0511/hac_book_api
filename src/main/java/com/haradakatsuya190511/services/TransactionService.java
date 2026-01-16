@@ -42,7 +42,7 @@ public class TransactionService {
 	}
 	
 	public TransactionResponseDto getTransaction(User user, Long id) {
-		return transactionRepository.findByIdWithCategory(user, id)
+		return transactionRepository.findWithCategoryByUserAndId(user, id)
 			.map(TransactionResponseDto::new)
 			.orElseThrow(TransactionNotFoundException::new);
 	}
@@ -54,7 +54,7 @@ public class TransactionService {
 	}
 	
 	public TransactionResponseDto updateTransaction(User user, Long id, UpdateTransactionRequestDto request) {
-		Transaction transaction = transactionRepository.findByIdWithCategory(user, id)
+		Transaction transaction = transactionRepository.findWithCategoryByUserAndId(user, id)
 			.orElseThrow(TransactionNotFoundException::new);
 		applyTransactionInfo(transaction, user, request);
 		TransactionResponseDto dto = new TransactionResponseDto(transaction);
@@ -63,7 +63,7 @@ public class TransactionService {
 	}
 	
 	public void deleteTransaction(User user, Long id) {
-		Transaction transaction = transactionRepository.findByIdWithCategory(user, id)
+		Transaction transaction = transactionRepository.findWithCategoryByUserAndId(user, id)
 			.orElseThrow(TransactionNotFoundException::new);
 		transactionRepository.delete(transaction);
 	}
