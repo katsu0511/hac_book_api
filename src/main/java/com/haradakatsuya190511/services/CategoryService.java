@@ -24,6 +24,7 @@ import com.haradakatsuya190511.repositories.CategoryRepository;
 @Service
 public class CategoryService {
 	
+	private static final String OTHERS = "Others";
 	private final CategoryRepository categoryRepository;
 	
 	public CategoryService(CategoryRepository categoryRepository) {
@@ -38,16 +39,20 @@ public class CategoryService {
 		return getCategoriesByCategoryType(user, CategoryType.INCOME);
 	}
 	
-	public List<CategoryResponseDto> getParentExpenseCategories(User user) {
-		return getParentCategoriesByCategoryType(user, CategoryType.EXPENSE);
+	public List<CategoryResponseDto> getParentExpenseCategoriesWithoutOthers(User user) {
+		return getParentCategoriesByCategoryType(user, CategoryType.EXPENSE).stream()
+			.filter(c -> !c.getName().equals(OTHERS))
+			.toList();
 	}
 	
-	public List<CategoryResponseDto> getParentIncomeCategories(User user) {
-		return getParentCategoriesByCategoryType(user, CategoryType.INCOME);
+	public List<CategoryResponseDto> getParentIncomeCategoriesWithoutOthers(User user) {
+		return getParentCategoriesByCategoryType(user, CategoryType.INCOME).stream()
+			.filter(c -> !c.getName().equals(OTHERS))
+			.toList();
 	}
 	
 	public CategoryResponseDto getCategory(User user, Long id) {
-		return categoryRepository.findByIdWithParent(id)
+		return categoryRepository.findWithParentById(id)
 			.filter(c -> c.getUser() != null && c.getUser().getId().equals(user.getId()))
 			.map(CategoryResponseDto::new)
 			.orElseThrow(CategoryNotFoundException::new);
@@ -70,8 +75,8 @@ public class CategoryService {
 	
 	public CategoryResponseDto updateCategory(User user, Long id, UpdateCategoryRequestDto request) {
 		Category category = categoryRepository.findById(id)
-				.filter(c -> c.getUser().getId().equals(user.getId()))
-				.orElseThrow(CategoryNotFoundException::new);
+			.filter(c -> c.getUser().getId().equals(user.getId()))
+			.orElseThrow(CategoryNotFoundException::new);
 		applyCategoryInfo(category, user, request);
 		return new CategoryResponseDto(categoryRepository.save(category));
 	}
@@ -102,7 +107,6 @@ public class CategoryService {
 	}
 	
 	private List<CategoryResponseDto> sortParentCategories(List<CategoryResponseDto> list) {
-		final String OTHERS = "Others";
 		return Stream.concat(
 			list.stream().filter(c -> !c.getName().equals(OTHERS)),
 			list.stream().filter(c -> c.getName().equals(OTHERS))
@@ -127,9 +131,10 @@ public class CategoryService {
 		Category parent = parentId == null ? null : categoryRepository.findById(parentId).orElseThrow(CategoryNotFoundException::new);
 		if (parent != null) {
 			boolean isDefault = parent.getUser() == null;
+			boolean isOthers = parent.getName().equals(OTHERS);
 			boolean isUserOwned = parent.getUser() != null && parent.getUser().getId().equals(user.getId());
 			boolean isTopLevel = parent.getParentCategory() == null;
-			if (!(isDefault || (isUserOwned && isTopLevel))) throw new InvalidCategoryException();
+			if (!(isDefault && !isOthers || isUserOwned && isTopLevel)) throw new InvalidCategoryException();
 		}
 		category.setParentCategory(parent);
 		category.setName(request.getName());
