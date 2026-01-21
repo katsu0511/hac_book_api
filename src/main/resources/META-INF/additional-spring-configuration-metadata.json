@@ -7,6 +7,16 @@
   {
     "name": "jwt.secret.secret-key",
     "type": "java.lang.String",
-    "description": "A description for 'jwt.secret'"
+    "description": "A description for 'jwt.secret.secret-key'"
+  },
+  {
+    "name": "app.cookie.same-site",
+    "type": "java.lang.String",
+    "description": "A description for 'app.cookie.same-site'"
+  },
+  {
+    "name": "app.cookie.secure",
+    "type": "java.lang.String",
+    "description": "A description for 'app.cookie.secure'"
   }
 ]}
