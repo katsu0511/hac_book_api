@@ -1,12 +1,12 @@
 # Hac Book API
 
 This is the backend API for a personal household accounting application.
-It provides features for managing income and expenses, categories, and summary dashboards for each user.
+It provides features for managing incomes and expenses, categories, and summary dashboards for each user.
 
 The application is designed as a REST API, separated from the frontend (React / TypeScript / Next.js),
 and includes authentication, authorization, testing, and deployment.
 
-Frontend is here: [Hac Book Web](https://github.com/katsu0511/hac_book_web)
+Frontend repository 👉 [Hac Book Web](https://github.com/katsu0511/hac_book_web)
 
 ## Tech Stack
 
@@ -30,7 +30,6 @@ Frontend is here: [Hac Book Web](https://github.com/katsu0511/hac_book_web)
 ### Infrastructure
 
 - AWS EC2
-- Vercel (Frontend)
 - Gradle
 
 ## System Configuration
@@ -43,7 +42,7 @@ Frontend is here: [Hac Book Web](https://github.com/katsu0511/hac_book_web)
 ```
 +----------------+       +----------------+       +----------------------+       +----------------+
 |    Browser     | ----> |    Next.js     | ----> |   Spring Boot API    | ----> |   PostgreSQL   |
-|                | <---- |    (Vercel)    | <---- |       (Vercel)       | <---- |                |
+|                | <---- |    (Vercel)    | <---- |      (AWS EC2)       | <---- |                |
 +----------------+       +----------------+       +----------------------+       +----------------+
 ```
 
@@ -51,10 +50,11 @@ Frontend is here: [Hac Book Web](https://github.com/katsu0511/hac_book_web)
 
 - User registration / login / logout (JWT authentication)
 - Category Management
-  - Income / Expense categories
   - Parent-Child category support
+  - Create and edit user-created categories
 - Transaction (Income / Expense) management
   - Retrieve transactions for a specified period
+  - Create, edit and delete income and expense records
 - Dashboard
   - Total Income / Expense
   - Expense breakdown for each category
@@ -63,12 +63,12 @@ Frontend is here: [Hac Book Web](https://github.com/katsu0511/hac_book_web)
 
 ### Database ER Diagram
 
-The ER diagram below shows the main database schema of this application,
+The ER diagram below shows the database schema of this application,
 including user-specific data separation and category relationships.
 
 ![ER Diagram](docs/er-diagram.png)
 
-Main tables:
+### Tables
 
 - users
 - settings
@@ -115,7 +115,6 @@ All endpoints require authentication unless otherwise specified.
 
 ## Deployment
 
-- Frontend: Vercel
 - Backend: AWS EC2
 - CI/CD is not yet introduced (planned for future improvement)
 
