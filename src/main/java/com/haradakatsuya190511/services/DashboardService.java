@@ -35,17 +35,17 @@ public class DashboardService {
 		return new SummaryResponseDto(getTotalExpense(user, start, end), getTotalIncome(user, start, end), getExpenseBreakdown(user, start, end));
 	}
 	
+	public List<ExpenseBreakdownDto> getExpenseBreakdown(User user, LocalDate start, LocalDate end) {
+		List<Object[]> rows = dashboardRepository.findBreakdownByCategoryType(user, CategoryType.EXPENSE, start, end);
+		return getBreakdown(rows);
+	}
+	
 	private BigDecimal getTotalExpense(User user, LocalDate start, LocalDate end) {
 		return dashboardRepository.findSumByCategoryTypeInPeriod(user, CategoryType.EXPENSE, start, end);
 	}
 	
 	private BigDecimal getTotalIncome(User user, LocalDate start, LocalDate end) {
 		return dashboardRepository.findSumByCategoryTypeInPeriod(user, CategoryType.INCOME, start, end);
-	}
-	
-	public List<ExpenseBreakdownDto> getExpenseBreakdown(User user, LocalDate start, LocalDate end) {
-		List<Object[]> rows = dashboardRepository.findBreakdownByCategoryType(user, CategoryType.EXPENSE, start, end);
-		return getBreakdown(rows);
 	}
 	
 	private List<ExpenseBreakdownDto> getBreakdown(List<Object[]> rows) {
