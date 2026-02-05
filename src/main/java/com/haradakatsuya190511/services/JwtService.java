@@ -12,7 +12,6 @@ import com.haradakatsuya190511.repositories.UserRepository;
 import com.haradakatsuya190511.utils.JwtUtil;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 
 @Service
 public class JwtService {
@@ -27,11 +26,7 @@ public class JwtService {
 	
 	public Optional<User> getUserIfValid(String token) {
 		try {
-			Claims claims = Jwts.parser()
-				.verifyWith(jwtUtil.getSecretKey())
-				.build()
-				.parseSignedClaims(token)
-				.getPayload();
+			Claims claims = jwtUtil.parseToken(token);
 			Date expiration = claims.getExpiration();
 			if (expiration != null && expiration.toInstant().isAfter(Instant.now())) {
 				Long userId = Long.valueOf(claims.getSubject());
