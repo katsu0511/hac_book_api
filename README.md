@@ -6,6 +6,8 @@ It provides features for managing income and expenses, categories, and summary d
 The application is designed as a REST API, separated from the frontend (React / TypeScript / Next.js),
 and includes authentication, authorization, testing, and deployment.
 
+Frontend is here: [Hac Book Web](https://github.com/katsu0511/hac_book_web)
+
 ## Tech Stack
 
 ### Backend
@@ -59,6 +61,13 @@ and includes authentication, authorization, testing, and deployment.
 
 ## Database Configuration
 
+### Database ER Diagram
+
+The ER diagram below shows the main database schema of this application,
+including user-specific data separation and category relationships.
+
+![ER Diagram](docs/er-diagram.png)
+
 Main tables:
 
 - users
@@ -70,6 +79,8 @@ The database design considers data separation for each user,
 allowing the coexistence of default categories and user-created categories.
 
 ## API Configuration
+
+All endpoints require authentication unless otherwise specified.
 
 | Method | Path | Description |
 |--------|------|-------------|
