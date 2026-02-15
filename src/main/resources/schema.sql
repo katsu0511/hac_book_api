@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS users(
 	password			VARCHAR(255)				NOT NULL,
 	created_at			TIMESTAMPTZ					NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY			(id)						,
+	
 	CONSTRAINT ck_users_name_not_blank
 		CHECK (length(trim(name)) > 0),
 	CONSTRAINT ck_users_email_not_blank
@@ -22,7 +23,16 @@ CREATE TABLE IF NOT EXISTS settings(
 	language			VARCHAR(32)					NOT NULL DEFAULT 'English',
 	currency			VARCHAR(3)					NOT NULL DEFAULT 'CAD',
 	PRIMARY KEY			(user_id)					,
-	FOREIGN KEY			(user_id)					REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
+	
+	CONSTRAINT ck_settings_language_not_blank
+		CHECK (length(trim(language)) > 0),
+	CONSTRAINT ck_settings_currency_format
+		CHECK (currency ~ '^[A-Z]{3}$'),
+	CONSTRAINT fk_settings_user
+		FOREIGN KEY (user_id)
+		REFERENCES users(id)
+			ON DELETE CASCADE
+			ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS categories(
@@ -30,14 +40,38 @@ CREATE TABLE IF NOT EXISTS categories(
 	user_id				BIGINT						DEFAULT NULL,
 	parent_id			BIGINT						DEFAULT NULL,
 	name				VARCHAR(100)				NOT NULL,
-	type				VARCHAR(10)					NOT NULL CHECK (type IN ('INCOME','EXPENSE')),
+	type				VARCHAR(7)					NOT NULL,
 	description			VARCHAR(200)				DEFAULT NULL,
 	is_active			BOOLEAN						NOT NULL DEFAULT TRUE,
 	PRIMARY KEY			(id)						,
-	UNIQUE				(user_id, name)				,
-	FOREIGN KEY			(user_id)					REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY			(parent_id)					REFERENCES categories(id) ON DELETE CASCADE ON UPDATE CASCADE
+	
+	CONSTRAINT ck_categories_parent_not_self
+		CHECK (parent_id IS NULL OR parent_id <> id),
+	CONSTRAINT ck_categories_name_not_blank
+		CHECK (length(trim(name)) > 0),
+	CONSTRAINT ck_categories_type
+		CHECK (type IN ('INCOME','EXPENSE')),
+	CONSTRAINT ck_categories_description_not_blank
+		CHECK (description IS NULL OR length(trim(description)) > 0),
+	CONSTRAINT fk_categories_user
+		FOREIGN KEY (user_id)
+		REFERENCES users(id)
+			ON DELETE CASCADE
+			ON UPDATE CASCADE,
+	CONSTRAINT fk_categories_parent
+		FOREIGN KEY (parent_id)
+		REFERENCES categories(id)
+			ON DELETE CASCADE
+			ON UPDATE CASCADE
 );
+
+CREATE UNIQUE INDEX uq_categories_global
+ON categories (name, type)
+WHERE user_id IS NULL;
+
+CREATE UNIQUE INDEX uq_categories_user
+ON categories (user_id, name, type)
+WHERE user_id IS NOT NULL;
 
 CREATE TABLE IF NOT EXISTS transactions(
 	id					BIGSERIAL					,
