@@ -1,10 +1,20 @@
+CREATE EXTENSION IF NOT EXISTS citext;
+
 CREATE TABLE IF NOT EXISTS users(
 	id					BIGSERIAL					,
 	name				VARCHAR(32)					NOT NULL,
-	email				VARCHAR(100)				NOT NULL UNIQUE,
+	email				CITEXT						NOT NULL UNIQUE,
 	password			VARCHAR(255)				NOT NULL,
-	created_at			TIMESTAMP					NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY			(id)
+	created_at			TIMESTAMPTZ					NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY			(id)						,
+	CONSTRAINT ck_users_name_not_blank
+		CHECK (length(trim(name)) > 0),
+	CONSTRAINT ck_users_email_not_blank
+		CHECK (length(trim(email)) > 0),
+	CONSTRAINT ck_users_email_length
+		CHECK (length(email) <= 100),
+	CONSTRAINT ck_users_password_not_blank
+		CHECK (length(trim(password)) > 0)
 );
 
 CREATE TABLE IF NOT EXISTS settings(
