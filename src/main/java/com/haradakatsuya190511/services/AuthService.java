@@ -9,6 +9,7 @@ import com.haradakatsuya190511.entities.Setting;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.exceptions.LoginFailedException;
 import com.haradakatsuya190511.exceptions.EmailAlreadyUsedException;
+import com.haradakatsuya190511.repositories.CategoryRepository;
 import com.haradakatsuya190511.repositories.SettingRepository;
 import com.haradakatsuya190511.repositories.UserRepository;
 import com.haradakatsuya190511.utils.JwtUtil;
@@ -20,12 +21,14 @@ public class AuthService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtUtil jwtUtil;
 	private final SettingRepository settingRepository;
+	private final CategoryRepository categoryRepository;
 	
-	public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, SettingRepository settingRepository) {
+	public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, SettingRepository settingRepository, CategoryRepository categoryRepository) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.jwtUtil = jwtUtil;
 		this.settingRepository = settingRepository;
+		this.categoryRepository = categoryRepository;
 	}
 	
 	public User authenticate(String email, String password) {
@@ -45,6 +48,7 @@ public class AuthService {
 		User user = new User(signupUser.getName(), signupUser.getEmail(), hashedPassword);
 		User savedUser = userRepository.save(user);
 		settingRepository.save(new Setting(savedUser));
+		categoryRepository.insertDefaultCategories(savedUser.getId());
 		return savedUser;
 	}
 	
