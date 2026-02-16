@@ -2,7 +2,7 @@ package com.haradakatsuya190511.dtos.transaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import com.haradakatsuya190511.entities.Transaction;
 import com.haradakatsuya190511.enums.CategoryType;
@@ -17,8 +17,8 @@ public class TransactionResponseDto {
 	private String currency;
 	private String description;
 	private LocalDate transactionDate;
-	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;
+	private OffsetDateTime createdAt;
+	private OffsetDateTime updatedAt;
 	
 	public TransactionResponseDto(Transaction transaction) {
 		this.id = transaction.getId();
@@ -70,11 +70,11 @@ public class TransactionResponseDto {
 		return transactionDate;
 	}
 	
-	public LocalDateTime getCreatedAt() {
+	public OffsetDateTime getCreatedAt() {
 		return createdAt;
 	}
 	
-	public LocalDateTime getUpdatedAt() {
+	public OffsetDateTime getUpdatedAt() {
 		return updatedAt;
 	}
 }
