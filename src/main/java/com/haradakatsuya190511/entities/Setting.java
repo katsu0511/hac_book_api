@@ -10,7 +10,6 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -32,10 +31,9 @@ public class Setting {
 	@Pattern(regexp = "^[A-Z]{3}$")
 	private String currency = "CAD";
 	
-	@OneToOne
+	@OneToOne(optional = false)
 	@MapsId
 	@JoinColumn(name = "user_id")
-	@NotNull
 	@JsonIgnore
 	private User user;
 	
@@ -74,11 +72,11 @@ public class Setting {
 		if (this == o) return true;
 		if (!(o instanceof Setting)) return false;
 		Setting other = (Setting) o;
-		return user != null && user.getId().equals(other.getUser().getId());
+		return userId != null && userId.equals(other.userId);
 	}
 	
 	@Override
 	public int hashCode() {
-		return user == null ? 0 : user.getId().hashCode();
+		return userId == null ? 0 : userId.hashCode();
 	}
 }

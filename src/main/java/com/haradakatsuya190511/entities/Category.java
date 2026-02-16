@@ -36,7 +36,7 @@ public class Category {
 	private String name;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
+	@Column(nullable = false, length = 7)
 	@NotNull
     private CategoryType type;
 	
@@ -47,8 +47,8 @@ public class Category {
 	@Column(nullable = false)
 	private boolean isActive = true;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "user_id", nullable = false)
 	@JsonIgnore
 	private User user;
 	
