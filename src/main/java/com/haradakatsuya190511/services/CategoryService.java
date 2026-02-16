@@ -52,8 +52,8 @@ public class CategoryService {
 	}
 	
 	public CategoryResponseDto getCategory(User user, Long id) {
-		return categoryRepository.findWithParentById(id)
-			.filter(c -> c.getUser() != null && c.getUser().getId().equals(user.getId()))
+		return categoryRepository.findWithParentByIdAndUserId(id, user.getId())
+			.filter(c -> c.getUser().getId().equals(user.getId()))
 			.map(CategoryResponseDto::new)
 			.orElseThrow(CategoryNotFoundException::new);
 	}
@@ -62,7 +62,7 @@ public class CategoryService {
 		CategoryResponseDto category = getCategory(user, id);
 		String parentName = null;
 		if (category.getParentId() != null) {
-			parentName = getCategoryName(category.getParentId());
+			parentName = getCategoryName(user, category.getParentId());
 		}
 		return new CategoryDetailResponseDto(category, parentName);
 	}
@@ -81,8 +81,9 @@ public class CategoryService {
 		return new CategoryResponseDto(categoryRepository.save(category));
 	}
 	
-	private String getCategoryName(Long id) {
+	private String getCategoryName(User user, Long id) {
 		return categoryRepository.findById(id)
+			.filter(c -> c.getUser().getId().equals(user.getId()))
 			.map(Category::getName)
 			.orElseThrow(CategoryNotFoundException::new);
 	}
@@ -130,11 +131,10 @@ public class CategoryService {
 		Long parentId = request.getParentId();
 		Category parent = parentId == null ? null : categoryRepository.findById(parentId).orElseThrow(CategoryNotFoundException::new);
 		if (parent != null) {
-			boolean isDefault = parent.getUser() == null;
-			boolean isOthers = parent.getName().equals(OTHERS);
-			boolean isUserOwned = parent.getUser() != null && parent.getUser().getId().equals(user.getId());
+			boolean isUserOwned = parent.getUser().getId().equals(user.getId());
 			boolean isTopLevel = parent.getParentCategory() == null;
-			if (!(isDefault && !isOthers || isUserOwned && isTopLevel)) throw new InvalidCategoryException();
+			boolean isOthers = parent.getName().equals(OTHERS);
+			if (!(isUserOwned && isTopLevel && !isOthers)) throw new InvalidCategoryException();
 		}
 		category.setParentCategory(parent);
 		category.setName(request.getName());
