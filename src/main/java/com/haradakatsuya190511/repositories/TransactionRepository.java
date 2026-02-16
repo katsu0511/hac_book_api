@@ -18,8 +18,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 	
 	@Query("""
 		SELECT t FROM Transaction t
-		JOIN FETCH t.category
+		JOIN FETCH t.category c
 		WHERE t.user = :user
+		AND c.user = :user
 		AND t.transactionDate BETWEEN :start AND :end
 	""")
 	List<Transaction> findAllWithCategoryInPeriod(
