@@ -156,17 +156,18 @@ class CategoryServiceTest {
 		User user = new User();
 		user.setId(1L);
 		Category cat = new Category(user);
-		when(categoryRepository.findWithParentById(1L)).thenReturn(Optional.of(cat));
+		when(categoryRepository.findWithParentByIdAndUserId(1L, 1L)).thenReturn(Optional.of(cat));
 		CategoryResponseDto dto = categoryService.getCategory(user, 1L);
 		assertNotNull(dto.getUserId());
 		assertEquals(dto.getUserId(), user.getId());
 	}
 	
 	@Test
-	void getCategory_userIsNull_throwsException() {
-		Category cat = new Category();
-		when(categoryRepository.findWithParentById(anyLong())).thenReturn(Optional.of(cat));
-		assertThrows(CategoryNotFoundException.class, () -> categoryService.getCategory(any(User.class), 1L));
+	void getCategory_notFound_throwsNotFound() {
+		User user = new User();
+		user.setId(1L);
+		when(categoryRepository.findWithParentByIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.empty());
+		assertThrows(CategoryNotFoundException.class, () -> categoryService.getCategory(user, 1L));
 	}
 	
 	@Test
@@ -178,7 +179,7 @@ class CategoryServiceTest {
 		
 		Category cat = new Category(otherUser);
 		
-		when(categoryRepository.findWithParentById(1L)).thenReturn(Optional.of(cat));
+		when(categoryRepository.findWithParentByIdAndUserId(1L, 1L)).thenReturn(Optional.of(cat));
 		
 		assertThrows(CategoryNotFoundException.class, () -> categoryService.getCategory(user, 1L));
     }
@@ -197,7 +198,7 @@ class CategoryServiceTest {
 		child.setParentCategory(parent);
 		child.setName("Child");
 		
-		when(categoryRepository.findWithParentById(2L)).thenReturn(Optional.of(child));
+		when(categoryRepository.findWithParentByIdAndUserId(2L, 1L)).thenReturn(Optional.of(child));
 		when(categoryRepository.findById(1L)).thenReturn(Optional.of(parent));
 		
 		CategoryDetailResponseDto dto = categoryService.getCategoryDetail(user, 2L);
@@ -216,7 +217,7 @@ class CategoryServiceTest {
 		category.setId(1L);
 		category.setName("Category");
 		
-		when(categoryRepository.findWithParentById(1L)).thenReturn(Optional.of(category));
+		when(categoryRepository.findWithParentByIdAndUserId(1L, 1L)).thenReturn(Optional.of(category));
 		
 		CategoryDetailResponseDto dto = categoryService.getCategoryDetail(user, 1L);
 		assertNotNull(dto.getCategory().getId());

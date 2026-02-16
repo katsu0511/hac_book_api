@@ -48,6 +48,7 @@ class TransactionServiceTest {
 	@Test
 	void getTransactionsInPeriod_withDates_success() {
 		User user = new User();
+		user.setId(1L);
 		LocalDate start = LocalDate.of(2024, 1, 1);
 		LocalDate end = LocalDate.of(2024, 1, 31);
 		
@@ -71,6 +72,7 @@ class TransactionServiceTest {
 	@Test
 	void getTransactionsInPeriod_whenNull_usesThisMonth() {
 		User user = new User();
+		user.setId(1L);
 		
 		Category category = new Category(user);
 		category.setId(1L);
@@ -97,6 +99,7 @@ class TransactionServiceTest {
 	@Test
 	void getTransaction_success() {
 		User user = new User();
+		user.setId(1L);
 		
 		Category category = new Category(user);
 		category.setId(1L);
@@ -120,11 +123,11 @@ class TransactionServiceTest {
 	}
 	
 	@Test
-	void createTransaction_withDefaultCategory_success() {
+	void createTransaction_success() {
 		User user = new User();
 		user.setId(1L);
 		
-		Category category = new Category(null);
+		Category category = new Category(user);
 		category.setId(10L);
 		
 		CreateTransactionRequestDto request = new CreateTransactionRequestDto();
@@ -181,9 +184,9 @@ class TransactionServiceTest {
 		User user = new User();
 		user.setId(1L);
 		
-		Transaction tx = new Transaction(user);
 		Category category = new Category(user);
-		category.setId(10L);
+		Transaction tx = new Transaction(user);
+		tx.setCategory(category);
 		
 		UpdateTransactionRequestDto request = new UpdateTransactionRequestDto();
 		request.setCategoryId(10L);
@@ -200,7 +203,10 @@ class TransactionServiceTest {
 	@Test
 	void deleteTransaction_success() {
 		User user = new User();
+		user.setId(1L);
+		Category category = new Category(user);
 		Transaction tx = new Transaction(user);
+		tx.setCategory(category);
 		
 		when(transactionRepository.findWithCategoryByUserAndId(user, 1L)).thenReturn(Optional.of(tx));
 		

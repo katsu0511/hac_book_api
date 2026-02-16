@@ -21,6 +21,7 @@ import com.haradakatsuya190511.entities.Setting;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.exceptions.EmailAlreadyUsedException;
 import com.haradakatsuya190511.exceptions.LoginFailedException;
+import com.haradakatsuya190511.repositories.CategoryRepository;
 import com.haradakatsuya190511.repositories.SettingRepository;
 import com.haradakatsuya190511.repositories.UserRepository;
 import com.haradakatsuya190511.utils.JwtUtil;
@@ -39,6 +40,9 @@ class AuthServiceTest {
 	
 	@Mock
 	SettingRepository settingRepository;
+	
+	@Mock
+	CategoryRepository categoryRepository;
 	
 	@InjectMocks
 	AuthService authService;
@@ -92,6 +96,7 @@ class AuthServiceTest {
 		assertEquals("test@example.com", result.getEmail());
 		verify(passwordEncoder).encode("password");
 		verify(settingRepository).save(any(Setting.class));
+		verify(categoryRepository).insertDefaultCategories(savedUser.getId());
 	}
 	
 	@Test
