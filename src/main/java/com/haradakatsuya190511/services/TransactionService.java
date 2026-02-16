@@ -83,7 +83,8 @@ public class TransactionService {
 		transaction.setCategory(category);
 		transaction.setAmount(request.getAmount());
 		transaction.setCurrency(request.getCurrency());
-		String description = request.getDescription().trim().equals("") ? null : request.getDescription();
+		String description = request.getDescription();
+		description = description == null || description.trim().equals("") ? null : request.getDescription();
 		transaction.setDescription(description);
 		transaction.setTransactionDate(request.getTransactionDate());
 	}
