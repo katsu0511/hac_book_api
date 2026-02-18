@@ -32,7 +32,7 @@ public class AuthService {
 	}
 	
 	public User authenticate(String email, String password) {
-		return userRepository.findByEmail(email)
+		return userRepository.findByEmailIgnoreCase(email)
 			.filter(user -> passwordEncoder.matches(password, user.getPassword()))
 			.orElseThrow(LoginFailedException::new);
     }
@@ -53,7 +53,7 @@ public class AuthService {
 	}
 	
 	public void checkEmailNotExists(String email) {
-		userRepository.findByEmail(email).ifPresent(user -> {
+		userRepository.findByEmailIgnoreCase(email).ifPresent(user -> {
 			throw new EmailAlreadyUsedException();
 		});
 	}
