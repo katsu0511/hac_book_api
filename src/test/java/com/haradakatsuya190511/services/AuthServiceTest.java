@@ -50,7 +50,7 @@ class AuthServiceTest {
 	@Test
 	void authenticate_success() {
 		User user = new User("John", "test@example.com", "hashed");
-		when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
+		when(userRepository.findByEmailIgnoreCase("test@example.com")).thenReturn(Optional.of(user));
 		when(passwordEncoder.matches("password", "hashed")).thenReturn(true);
 		User result = authService.authenticate("test@example.com", "password");
 		assertEquals(user, result);
@@ -59,7 +59,7 @@ class AuthServiceTest {
 	@Test
 	void authenticate_wrongPassword_throwsException() {
 		User user = new User("John", "test@example.com", "hashed");
-		when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
+		when(userRepository.findByEmailIgnoreCase("test@example.com")).thenReturn(Optional.of(user));
 		when(passwordEncoder.matches(any(), any())).thenReturn(false);
 		assertThrows(LoginFailedException.class, () ->
 			authService.authenticate("test@example.com", "wrong")
@@ -68,7 +68,7 @@ class AuthServiceTest {
 	
 	@Test
 	void authenticate_userNotFound_throwsException() {
-		when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.empty());
+		when(userRepository.findByEmailIgnoreCase("test@example.com")).thenReturn(Optional.empty());
 		assertThrows(LoginFailedException.class, () ->
 			authService.authenticate("test@example.com", "password")
 		);
@@ -88,7 +88,7 @@ class AuthServiceTest {
 		dto.setName("John");
 		dto.setEmail("test@example.com");
 		dto.setPassword("password");
-		when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.empty());
+		when(userRepository.findByEmailIgnoreCase("test@example.com")).thenReturn(Optional.empty());
 		when(passwordEncoder.encode("password")).thenReturn("hashed");
 		User savedUser = new User("John", "test@example.com", "hashed");
 		when(userRepository.save(any(User.class))).thenReturn(savedUser);
@@ -105,7 +105,7 @@ class AuthServiceTest {
 		dto.setName("John");
 		dto.setEmail("test@example.com");
 		dto.setPassword("password");
-		when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(new User()));
+		when(userRepository.findByEmailIgnoreCase("test@example.com")).thenReturn(Optional.of(new User()));
 		assertThrows(EmailAlreadyUsedException.class, () ->
 			authService.signup(dto)
 		);
@@ -113,13 +113,13 @@ class AuthServiceTest {
 	
 	@Test
 	void checkEmailNotExists_success() {
-		when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.empty());
+		when(userRepository.findByEmailIgnoreCase("test@example.com")).thenReturn(Optional.empty());
 		assertDoesNotThrow(() -> authService.checkEmailNotExists("test@example.com"));
 	}
 	
 	@Test
 	void checkEmailNotExists_whenExists_throwsException() {
-		when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(new User()));
+		when(userRepository.findByEmailIgnoreCase("test@example.com")).thenReturn(Optional.of(new User()));
 		assertThrows(EmailAlreadyUsedException.class, () ->
 			authService.checkEmailNotExists("test@example.com")
 		);
