@@ -32,7 +32,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 		WHERE c.user = :user
 		AND p.user = :user
 		AND c.type = :type
-		ORDER BY p.id ASC, c.id ASC
+		ORDER BY c.parentCategory ASC, c.id ASC
 	""")
 	List<Category> findChildCategories(@Param("user") User user, @Param("type") CategoryType type);
 	

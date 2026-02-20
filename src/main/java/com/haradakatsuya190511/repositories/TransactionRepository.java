@@ -22,6 +22,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 		WHERE t.user = :user
 		AND c.user = :user
 		AND t.transactionDate BETWEEN :start AND :end
+		ORDER BY t.transactionDate DESC, t.updatedAt DESC
 	""")
 	List<Transaction> findAllWithCategoryInPeriod(
 		@Param("user") User user,
