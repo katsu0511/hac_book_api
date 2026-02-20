@@ -35,19 +35,19 @@ CREATE TABLE IF NOT EXISTS settings(
 			ON UPDATE CASCADE
 );
 
+CREATE TYPE IF NOT EXISTS category_type AS ENUM ('INCOME', 'EXPENSE');
+
 CREATE TABLE IF NOT EXISTS category_templates(
 	id					BIGSERIAL					,
 	display_order		INT							NOT NULL,
 	name				VARCHAR(100)				NOT NULL,
-	type				VARCHAR(7)					NOT NULL,
+	type				category_type				NOT NULL,
 	PRIMARY KEY			(id)						,
 	
 	CONSTRAINT ck_category_templates_order_positive
 		CHECK (display_order > 0),
 	CONSTRAINT ck_category_templates_name_not_blank
 		CHECK (length(trim(name)) > 0),
-	CONSTRAINT ck_category_templates_type
-		CHECK (type IN ('INCOME','EXPENSE')),
 	CONSTRAINT uq_category_templates_name_type
 		UNIQUE (name, type)
 );
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS categories(
 	user_id				BIGINT						NOT NULL,
 	parent_id			BIGINT						DEFAULT NULL,
 	name				VARCHAR(100)				NOT NULL,
-	type				VARCHAR(7)					NOT NULL,
+	type				category_type				NOT NULL,
 	description			VARCHAR(200)				DEFAULT NULL,
 	is_active			BOOLEAN						NOT NULL DEFAULT TRUE,
 	PRIMARY KEY			(id)						,
@@ -66,8 +66,6 @@ CREATE TABLE IF NOT EXISTS categories(
 		CHECK (parent_id IS NULL OR parent_id <> id),
 	CONSTRAINT ck_categories_name_not_blank
 		CHECK (length(trim(name)) > 0),
-	CONSTRAINT ck_categories_type
-		CHECK (type IN ('INCOME','EXPENSE')),
 	CONSTRAINT ck_categories_description_not_blank
 		CHECK (description IS NULL OR length(trim(description)) > 0),
 	CONSTRAINT uq_categories_user_name_type
@@ -86,6 +84,9 @@ CREATE TABLE IF NOT EXISTS categories(
 
 CREATE UNIQUE INDEX IF NOT EXISTS uq_categories_id_user
 ON categories (id, user_id);
+
+CREATE INDEX IF NOT EXISTS idx_categories_user_parent_type_id
+ON categories (user_id, type, parent_id ASC, id ASC);
 
 CREATE TABLE IF NOT EXISTS transactions(
 	id					BIGSERIAL					,
@@ -116,6 +117,12 @@ CREATE TABLE IF NOT EXISTS transactions(
 			ON DELETE NO ACTION
 			ON UPDATE CASCADE
 );
+
+CREATE INDEX IF NOT EXISTS idx_transactions_user_date_desc_updated_at_desc
+ON transactions (user_id, transaction_date DESC, updated_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_transactions_user_category_date
+ON transactions (user_id, category_id, transaction_date);
 
 CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS trigger AS $$
