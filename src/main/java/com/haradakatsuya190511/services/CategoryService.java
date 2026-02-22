@@ -139,6 +139,8 @@ public class CategoryService {
 		category.setParentCategory(parent);
 		category.setName(request.getName());
 		category.setType(request.getType());
-		category.setDescription(request.getDescription());
+		String description = request.getDescription();
+		description = description == null || description.trim().equals("") ? null : request.getDescription();
+		category.setDescription(description);
 	}
 }
