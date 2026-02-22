@@ -37,12 +37,15 @@ public class TransactionService {
 			end = thisMonth.atEndOfMonth();
 		}
 		return transactionRepository.findAllWithCategoryInPeriod(user, start, end).stream()
+			.filter(t -> t.getCategory().getUser().getId().equals(user.getId()))
 			.map(TransactionResponseDto::new)
 			.toList();
 	}
 	
 	public TransactionResponseDto getTransaction(User user, Long id) {
 		return transactionRepository.findWithCategoryByUserAndId(user, id)
+			.filter(t -> t.getUser().getId().equals(user.getId()))
+			.filter(t -> t.getCategory().getUser().getId().equals(user.getId()))
 			.map(TransactionResponseDto::new)
 			.orElseThrow(TransactionNotFoundException::new);
 	}
@@ -55,6 +58,8 @@ public class TransactionService {
 	
 	public TransactionResponseDto updateTransaction(User user, Long id, UpdateTransactionRequestDto request) {
 		Transaction transaction = transactionRepository.findWithCategoryByUserAndId(user, id)
+			.filter(t -> t.getUser().getId().equals(user.getId()))
+			.filter(t -> t.getCategory().getUser().getId().equals(user.getId()))
 			.orElseThrow(TransactionNotFoundException::new);
 		applyTransactionInfo(transaction, user, request);
 		TransactionResponseDto dto = new TransactionResponseDto(transaction);
@@ -64,6 +69,8 @@ public class TransactionService {
 	
 	public void deleteTransaction(User user, Long id) {
 		Transaction transaction = transactionRepository.findWithCategoryByUserAndId(user, id)
+			.filter(t -> t.getUser().getId().equals(user.getId()))
+			.filter(t -> t.getCategory().getUser().getId().equals(user.getId()))
 			.orElseThrow(TransactionNotFoundException::new);
 		transactionRepository.delete(transaction);
 	}
@@ -71,13 +78,14 @@ public class TransactionService {
 	private void applyTransactionInfo(Transaction transaction, User user, TransactionRequest request) {
 		Long categoryId = request.getCategoryId();
 		Category category = categoryRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
-		boolean isDefault = category.getUser() == null;
-		boolean isUserOwned = category.getUser() != null && category.getUser().getId().equals(user.getId());
-		if (!isDefault && !isUserOwned) throw new InvalidCategoryException();
+		boolean isUserOwned = category.getUser().getId().equals(user.getId());
+		if (!isUserOwned) throw new InvalidCategoryException();
 		transaction.setCategory(category);
 		transaction.setAmount(request.getAmount());
 		transaction.setCurrency(request.getCurrency());
-		transaction.setDescription(request.getDescription());
+		String description = request.getDescription();
+		description = description == null || description.trim().equals("") ? null : request.getDescription();
+		transaction.setDescription(description);
 		transaction.setTransactionDate(request.getTransactionDate());
 	}
 }

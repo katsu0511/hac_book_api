@@ -2,9 +2,10 @@ package com.haradakatsuya190511.entities;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.Objects;
 
-import org.hibernate.annotations.UpdateTimestamp;
+import com.haradakatsuya190511.exceptions.InvalidCategoryException;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,7 +33,7 @@ public class Transaction {
 	@Column(precision = 10, scale = 2, nullable = false)
 	@NotNull
 	@Digits(integer = 8, fraction = 2)
-	private BigDecimal amount = BigDecimal.ZERO;
+	private BigDecimal amount;
 	
 	@Column(length = 3, nullable = false)
 	@NotBlank
@@ -43,31 +44,28 @@ public class Transaction {
 	@Size(max = 200)
 	private String description;
 	
-	@Column(nullable = false)
+	@Column(name = "transaction_date", nullable = false)
 	@NotNull
 	private LocalDate transactionDate;
 	
-	@Column(insertable = false, updatable = false)
-	private LocalDateTime createdAt;
+	@Column(name = "created_at", insertable = false, updatable = false, nullable = false)
+	private OffsetDateTime createdAt;
 	
-	@UpdateTimestamp
-	@Column(insertable = false)
-	private LocalDateTime updatedAt;
+	@Column(name = "updated_at", insertable = false, updatable = false, nullable = false)
+	private OffsetDateTime updatedAt;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	@NotNull
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "category_id")
-	@NotNull
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "category_id", nullable = false)
 	private Category category;
 	
 	public Transaction() {}
 	
 	public Transaction(User user) {
-		this.user = user;
+		this.user = Objects.requireNonNull(user);
 	}
 	
 	public Long getId() {
@@ -106,11 +104,11 @@ public class Transaction {
 		this.transactionDate = transactionDate;
 	}
 	
-	public LocalDateTime getCreatedAt() {
+	public OffsetDateTime getCreatedAt() {
 		return createdAt;
 	}
 	
-	public LocalDateTime getUpdatedAt() {
+	public OffsetDateTime getUpdatedAt() {
 		return updatedAt;
 	}
 	
@@ -123,6 +121,9 @@ public class Transaction {
 	}
 	
 	public void setCategory(Category category) {
+		if (category == null || this.user != null && !category.getUser().getId().equals(this.user.getId())) {
+			throw new InvalidCategoryException();
+		}
 		this.category = category;
 	}
 	

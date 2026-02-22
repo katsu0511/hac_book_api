@@ -37,7 +37,7 @@ public interface DashboardRepository extends JpaRepository<Transaction, Long> {
 			ON t.category = c
 			AND t.user = :user
 			AND t.transactionDate BETWEEN :start AND :end
-		WHERE (c.user = :user OR c.user IS NULL)
+		WHERE c.user = :user
 		AND c.type = :type
 		GROUP BY c.id, c.name, c.parentCategory.id
 		ORDER BY c.id

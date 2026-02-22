@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,7 +19,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 	
 	@Query("""
 		SELECT c FROM Category c
-		WHERE (c.user = :user OR c.user IS NULL)
+		WHERE c.user = :user
 		AND c.parentCategory IS NULL
 		AND c.type = :type
 		ORDER BY c.id ASC
@@ -29,13 +30,21 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 		SELECT c FROM Category c
 		JOIN FETCH c.parentCategory p
 		WHERE c.user = :user
-		AND p IS NOT NULL
-		AND (p.user = :user OR p.user IS NULL)
+		AND p.user = :user
 		AND c.type = :type
-		ORDER BY p.id ASC, c.id ASC
+		ORDER BY c.parentCategory ASC, c.id ASC
 	""")
 	List<Category> findChildCategories(@Param("user") User user, @Param("type") CategoryType type);
 	
+	@Modifying
+	@Query(value = """
+		INSERT INTO categories (user_id, name, type, description)
+		SELECT :userId, name, type, NULL
+		FROM category_templates
+		ORDER BY display_order
+	""", nativeQuery = true)
+	void insertDefaultCategories(@Param("userId") Long userId);
+	
 	@EntityGraph(attributePaths = {"parentCategory"})
-	Optional<Category> findWithParentById(Long id);
+	Optional<Category> findWithParentByIdAndUserId(Long id, Long userId);
 }

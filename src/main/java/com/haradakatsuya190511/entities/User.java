@@ -1,6 +1,6 @@
 package com.haradakatsuya190511.entities;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,8 +44,8 @@ public class User {
 	@JsonIgnore
 	private String password;
 	
-	@Column(insertable = false, updatable = false)
-	private LocalDateTime createdAt;
+	@Column(name = "created_at", insertable = false, updatable = false)
+	private OffsetDateTime createdAt;
 	
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
 	private Setting setting;
@@ -98,7 +98,7 @@ public class User {
 		this.password = password;
 	}
 	
-	public LocalDateTime getCreatedAt() {
+	public OffsetDateTime getCreatedAt() {
 		return createdAt;
 	}
 	

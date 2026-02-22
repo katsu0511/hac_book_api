@@ -1,6 +1,6 @@
 package com.haradakatsuya190511.dtos.auth;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import com.haradakatsuya190511.entities.User;
 
@@ -8,7 +8,7 @@ public class UserResponseDto {
 	private Long id;
 	private String name;
 	private String email;
-	private LocalDateTime createdAt;
+	private OffsetDateTime createdAt;
 
 	public UserResponseDto(User user) {
 		this.id = user.getId();
@@ -29,7 +29,7 @@ public class UserResponseDto {
 		return email;
 	}
 	
-	public LocalDateTime getCreatedAt() {
+	public OffsetDateTime getCreatedAt() {
 		return createdAt;
 	}
 }

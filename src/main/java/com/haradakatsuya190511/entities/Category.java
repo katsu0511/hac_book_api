@@ -3,6 +3,9 @@ package com.haradakatsuya190511.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.haradakatsuya190511.enums.CategoryType;
 
@@ -36,9 +39,10 @@ public class Category {
 	private String name;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
+	@JdbcTypeCode(SqlTypes.NAMED_ENUM)
+	@Column(columnDefinition = "category_type", nullable = false)
 	@NotNull
-    private CategoryType type;
+	private CategoryType type;
 	
 	@Column(length = 200)
 	@Size(max = 200)
@@ -47,8 +51,8 @@ public class Category {
 	@Column(nullable = false)
 	private boolean isActive = true;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "user_id", nullable = false)
 	@JsonIgnore
 	private User user;
 	
