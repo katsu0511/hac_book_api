@@ -35,7 +35,17 @@ CREATE TABLE IF NOT EXISTS settings(
 			ON UPDATE CASCADE
 );
 
-CREATE TYPE IF NOT EXISTS category_type AS ENUM ('INCOME', 'EXPENSE');
+DO $$
+BEGIN
+	IF NOT EXISTS (
+		SELECT 1
+		FROM pg_type
+		WHERE typname = 'category_type'
+	) THEN
+		CREATE TYPE category_type AS ENUM ('INCOME', 'EXPENSE');
+	END IF;
+END
+$$;
 
 CREATE TABLE IF NOT EXISTS category_templates(
 	id					BIGSERIAL					,
@@ -141,22 +151,22 @@ INSERT INTO category_templates (display_order, name, type)
 SELECT display_order, name, type
 FROM (
 	VALUES
-		(1, 'Housing', 'EXPENSE'),
-		(2, 'Utilities', 'EXPENSE'),
-		(3, 'Insurance', 'EXPENSE'),
-		(4, 'Vehicle', 'EXPENSE'),
-		(5, 'Education', 'EXPENSE'),
-		(6, 'Tax', 'EXPENSE'),
-		(7, 'Transportation', 'EXPENSE'),
-		(8, 'Food', 'EXPENSE'),
-		(9, 'Supplies', 'EXPENSE'),
-		(10, 'Medical', 'EXPENSE'),
-		(11, 'Clothing', 'EXPENSE'),
-		(12, 'Entertainment', 'EXPENSE'),
-		(13, 'Leisure', 'EXPENSE'),
-		(14, 'Others', 'EXPENSE'),
-		(15, 'Salary', 'INCOME'),
-		(16, 'Others', 'INCOME')
+		(1, 'Housing', 'EXPENSE'::category_type),
+		(2, 'Utilities', 'EXPENSE'::category_type),
+		(3, 'Insurance', 'EXPENSE'::category_type),
+		(4, 'Vehicle', 'EXPENSE'::category_type),
+		(5, 'Education', 'EXPENSE'::category_type),
+		(6, 'Tax', 'EXPENSE'::category_type),
+		(7, 'Transportation', 'EXPENSE'::category_type),
+		(8, 'Food', 'EXPENSE'::category_type),
+		(9, 'Supplies', 'EXPENSE'::category_type),
+		(10, 'Medical', 'EXPENSE'::category_type),
+		(11, 'Clothing', 'EXPENSE'::category_type),
+		(12, 'Entertainment', 'EXPENSE'::category_type),
+		(13, 'Leisure', 'EXPENSE'::category_type),
+		(14, 'Others', 'EXPENSE'::category_type),
+		(15, 'Salary', 'INCOME'::category_type),
+		(16, 'Others', 'INCOME'::category_type)
 ) AS tmp(display_order, name, type)
 WHERE NOT EXISTS (
 	SELECT 1 FROM category_templates c
