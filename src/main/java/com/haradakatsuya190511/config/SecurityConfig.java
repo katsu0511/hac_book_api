@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,24 +15,30 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.haradakatsuya190511.filters.JwtAuthenticationFilter;
+import com.haradakatsuya190511.services.JwtService;
+import com.haradakatsuya190511.services.TokenService;
 
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
+@Profile("!test")
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 	
 	private final CorsProperties corsProperties;
-	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	
-	public SecurityConfig(CorsProperties corsProperties, JwtAuthenticationFilter jwtAuthenticationFilter) {
+	public SecurityConfig(CorsProperties corsProperties) {
 		this.corsProperties = corsProperties;
-		this.jwtAuthenticationFilter = jwtAuthenticationFilter;
 	}
 	
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	public JwtAuthenticationFilter jwtAuthenticationFilter(TokenService tokenService, JwtService jwtService) {
+		return new JwtAuthenticationFilter(tokenService, jwtService);
+	}
+	
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
 		http
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/login", "/signup", "/check-auth").permitAll()
