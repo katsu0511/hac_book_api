@@ -1,5 +1,6 @@
 package com.haradakatsuya190511.controllers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -54,6 +55,6 @@ public class AuthController {
 		User user = authService.signup(signupUser);
 		String jwt = authService.generateToken(user);
 		cookieManager.setToken(response, jwt);
-		return ResponseEntity.ok(new UserResponseDto(user));
+		return ResponseEntity.status(HttpStatus.CREATED).body(new UserResponseDto(user));
 	}
 }
