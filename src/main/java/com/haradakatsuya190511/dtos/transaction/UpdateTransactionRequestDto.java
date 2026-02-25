@@ -5,13 +5,35 @@ import java.time.LocalDate;
 
 import com.haradakatsuya190511.dtos.transaction.shared.TransactionRequest;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
 public class UpdateTransactionRequestDto implements TransactionRequest {
+	
+	@NotNull
 	private Long id;
+	
+	@NotNull
 	private Long userId;
+	
+	@NotNull
 	private Long categoryId;
+	
+	@NotNull
+	@Positive
 	private BigDecimal amount;
+	
+	@NotBlank
+	@Pattern(regexp = "^[A-Z]{3}$")
 	private String currency;
+	
+	@Size(max = 200)
 	private String description;
+	
+	@NotNull
 	private LocalDate transactionDate;
 	
 	public Long getId() {

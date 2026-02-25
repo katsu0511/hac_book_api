@@ -9,9 +9,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 public class CreateTransactionRequestDto implements TransactionRequest {
 	
+	@NotNull
 	private Long userId;
 	
 	@NotNull
@@ -25,6 +27,7 @@ public class CreateTransactionRequestDto implements TransactionRequest {
 	@Pattern(regexp = "^[A-Z]{3}$")
 	private String currency;
 	
+	@Size(max = 200)
 	private String description;
 	
 	@NotNull
