@@ -3,11 +3,24 @@ package com.haradakatsuya190511.dtos.category;
 import com.haradakatsuya190511.dtos.category.shared.CategoryRequest;
 import com.haradakatsuya190511.enums.CategoryType;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class UpdateCategoryRequestDto implements CategoryRequest {
+	
 	private Long id;
+	
 	private Long parentId;
+	
+	@NotBlank
+	@Size(max = 100)
 	private String name;
+	
+	@NotNull
 	private CategoryType type;
+	
+	@Size(max = 200)
 	private String description;
 	
 	public Long getId() {
