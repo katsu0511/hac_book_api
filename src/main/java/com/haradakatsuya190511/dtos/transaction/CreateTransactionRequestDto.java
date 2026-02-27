@@ -14,9 +14,6 @@ import jakarta.validation.constraints.Size;
 public class CreateTransactionRequestDto implements TransactionRequest {
 	
 	@NotNull
-	private Long userId;
-	
-	@NotNull
 	private Long categoryId;
 	
 	@NotNull
@@ -32,14 +29,6 @@ public class CreateTransactionRequestDto implements TransactionRequest {
 	
 	@NotNull
 	private LocalDate transactionDate;
-	
-	public Long getUserId() {
-		return userId;
-	}
-	
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
 	
 	public Long getCategoryId() {
 		return categoryId;

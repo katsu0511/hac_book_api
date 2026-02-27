@@ -17,9 +17,6 @@ public class UpdateTransactionRequestDto implements TransactionRequest {
 	private Long id;
 	
 	@NotNull
-	private Long userId;
-	
-	@NotNull
 	private Long categoryId;
 	
 	@NotNull
@@ -42,14 +39,6 @@ public class UpdateTransactionRequestDto implements TransactionRequest {
 	
 	public void setId(Long id) {
 		this.id = id;
-	}
-	
-	public Long getUserId() {
-		return userId;
-	}
-	
-	public void setUserId(Long userId) {
-		this.userId = userId;
 	}
 	
 	public Long getCategoryId() {
