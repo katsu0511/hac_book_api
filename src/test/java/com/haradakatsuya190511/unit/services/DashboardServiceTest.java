@@ -1,4 +1,4 @@
-package com.haradakatsuya190511.services;
+package com.haradakatsuya190511.unit.services;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,6 +22,7 @@ import com.haradakatsuya190511.dtos.summary.SummaryResponseDto;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.enums.CategoryType;
 import com.haradakatsuya190511.repositories.DashboardRepository;
+import com.haradakatsuya190511.services.DashboardService;
 
 @ExtendWith(MockitoExtension.class)
 class DashboardServiceTest {

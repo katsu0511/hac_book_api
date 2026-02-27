@@ -1,4 +1,4 @@
-package com.haradakatsuya190511.services;
+package com.haradakatsuya190511.unit.services;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,7 +24,10 @@ import com.haradakatsuya190511.exceptions.LoginFailedException;
 import com.haradakatsuya190511.repositories.CategoryRepository;
 import com.haradakatsuya190511.repositories.SettingRepository;
 import com.haradakatsuya190511.repositories.UserRepository;
+import com.haradakatsuya190511.services.AuthService;
 import com.haradakatsuya190511.utils.JwtUtil;
+
+import jakarta.persistence.EntityManager;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -43,6 +46,9 @@ class AuthServiceTest {
 	
 	@Mock
 	CategoryRepository categoryRepository;
+	
+	@Mock
+	EntityManager entityManager;
 	
 	@InjectMocks
 	AuthService authService;
@@ -91,7 +97,7 @@ class AuthServiceTest {
 		when(userRepository.findByEmailIgnoreCase("test@example.com")).thenReturn(Optional.empty());
 		when(passwordEncoder.encode("password")).thenReturn("hashed");
 		User savedUser = new User("John", "test@example.com", "hashed");
-		when(userRepository.save(any(User.class))).thenReturn(savedUser);
+		when(userRepository.saveAndFlush(any(User.class))).thenReturn(savedUser);
 		User result = authService.signup(dto);
 		assertEquals("test@example.com", result.getEmail());
 		verify(passwordEncoder).encode("password");

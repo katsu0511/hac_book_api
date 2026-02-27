@@ -1,4 +1,4 @@
-package com.haradakatsuya190511.services;
+package com.haradakatsuya190511.unit.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,6 +32,7 @@ import com.haradakatsuya190511.exceptions.InvalidCategoryException;
 import com.haradakatsuya190511.exceptions.TransactionNotFoundException;
 import com.haradakatsuya190511.repositories.CategoryRepository;
 import com.haradakatsuya190511.repositories.TransactionRepository;
+import com.haradakatsuya190511.services.TransactionService;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {

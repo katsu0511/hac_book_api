@@ -1,4 +1,4 @@
-package com.haradakatsuya190511.services;
+package com.haradakatsuya190511.unit.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.repositories.UserRepository;
+import com.haradakatsuya190511.services.JwtService;
 import com.haradakatsuya190511.utils.JwtUtil;
 
 import io.jsonwebtoken.Claims;
