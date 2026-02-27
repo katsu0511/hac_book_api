@@ -1,4 +1,4 @@
-package com.haradakatsuya190511.filters;
+package com.haradakatsuya190511.unit.filters;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import com.haradakatsuya190511.entities.User;
+import com.haradakatsuya190511.filters.JwtAuthenticationFilter;
 import com.haradakatsuya190511.services.JwtService;
 import com.haradakatsuya190511.services.TokenService;
 
@@ -57,7 +58,7 @@ class JwtAuthenticationFilterTest {
 		MockHttpServletResponse res = new MockHttpServletResponse();
 		FilterChain chain = mock(FilterChain.class);
 		
-		filter.doFilterInternal(req, res, chain);
+		filter.doFilter(req, res, chain);
 		
 		verify(chain, times(1)).doFilter(req, res);
 		verifyNoInteractions(tokenService);
@@ -72,7 +73,7 @@ class JwtAuthenticationFilterTest {
 
         when(tokenService.getTokenCookie(req)).thenReturn(null);
 
-        filter.doFilterInternal(req, res, chain);
+        filter.doFilter(req, res, chain);
 
         assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
         verify(tokenService, times(1)).getTokenCookie(req);
@@ -90,7 +91,7 @@ class JwtAuthenticationFilterTest {
 		when(tokenService.getTokenCookie(req)).thenReturn(cookie);
 		when(jwtService.getUserIfValid("bad.token")).thenReturn(Optional.empty());
 		
-		filter.doFilterInternal(req, res, chain);
+		filter.doFilter(req, res, chain);
 		
 		assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
 		verify(tokenService, times(1)).getTokenCookie(req);
@@ -110,7 +111,7 @@ class JwtAuthenticationFilterTest {
 		User user = new User();
 		when(jwtService.getUserIfValid("good.token")).thenReturn(Optional.of(user));
 		
-		filter.doFilterInternal(req, res, chain);
+		filter.doFilter(req, res, chain);
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		assertThat(auth).isNotNull();
