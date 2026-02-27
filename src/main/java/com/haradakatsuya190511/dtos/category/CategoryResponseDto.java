@@ -14,7 +14,7 @@ public class CategoryResponseDto {
 	
 	public CategoryResponseDto(Category category) {
 		this.id = category.getId();
-		this.userId = category.getUser() == null ? null : category.getUser().getId();
+		this.userId = category.getUser().getId();
 		this.parentId = category.getParentCategory() == null ? null : category.getParentCategory().getId();
 		this.name = category.getName();
 		this.type = category.getType();
