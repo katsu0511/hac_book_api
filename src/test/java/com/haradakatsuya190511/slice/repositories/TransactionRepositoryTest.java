@@ -1,4 +1,4 @@
-package com.haradakatsuya190511.repositories;
+package com.haradakatsuya190511.slice.repositories;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -21,6 +21,9 @@ import com.haradakatsuya190511.entities.Category;
 import com.haradakatsuya190511.entities.Transaction;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.enums.CategoryType;
+import com.haradakatsuya190511.repositories.CategoryRepository;
+import com.haradakatsuya190511.repositories.TransactionRepository;
+import com.haradakatsuya190511.repositories.UserRepository;
 
 import jakarta.persistence.EntityManager;
 
