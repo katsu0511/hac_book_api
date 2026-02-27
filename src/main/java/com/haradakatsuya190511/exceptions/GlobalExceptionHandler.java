@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(CategoryNotFoundException.class)
 	public ResponseEntity<ErrorResponseDto> handleCategoryNotFound(CategoryNotFoundException ex) {
-		return ResponseEntity.badRequest().body(new ErrorResponseDto(ex.getMessage()));
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponseDto(ex.getMessage()));
 	}
 	
 	@ExceptionHandler(InvalidCategoryException.class)
