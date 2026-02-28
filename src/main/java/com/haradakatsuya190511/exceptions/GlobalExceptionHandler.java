@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(TransactionNotFoundException.class)
 	public ResponseEntity<ErrorResponseDto> handleTransactionNotFound(TransactionNotFoundException ex) {
-		return ResponseEntity.badRequest().body(new ErrorResponseDto(ex.getMessage()));
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponseDto(ex.getMessage()));
 	}
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
