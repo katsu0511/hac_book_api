@@ -14,6 +14,8 @@ import com.haradakatsuya190511.repositories.SettingRepository;
 import com.haradakatsuya190511.repositories.UserRepository;
 import com.haradakatsuya190511.utils.JwtUtil;
 
+import jakarta.persistence.EntityManager;
+
 @Service
 public class AuthService {
 	
@@ -22,13 +24,22 @@ public class AuthService {
 	private final JwtUtil jwtUtil;
 	private final SettingRepository settingRepository;
 	private final CategoryRepository categoryRepository;
+	private final EntityManager entityManager;
 	
-	public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, SettingRepository settingRepository, CategoryRepository categoryRepository) {
+	public AuthService(
+		UserRepository userRepository,
+		PasswordEncoder passwordEncoder,
+		JwtUtil jwtUtil,
+		SettingRepository settingRepository,
+		CategoryRepository categoryRepository,
+		EntityManager entityManager
+	) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.jwtUtil = jwtUtil;
 		this.settingRepository = settingRepository;
 		this.categoryRepository = categoryRepository;
+		this.entityManager = entityManager;
 	}
 	
 	public User authenticate(String email, String password) {
@@ -46,9 +57,10 @@ public class AuthService {
 		checkEmailNotExists(signupUser.getEmail());
 		String hashedPassword = passwordEncoder.encode(signupUser.getPassword());
 		User user = new User(signupUser.getName(), signupUser.getEmail(), hashedPassword);
-		User savedUser = userRepository.save(user);
+		User savedUser = userRepository.saveAndFlush(user);
 		settingRepository.save(new Setting(savedUser));
 		categoryRepository.insertDefaultCategories(savedUser.getId());
+		entityManager.refresh(savedUser);
 		return savedUser;
 	}
 	

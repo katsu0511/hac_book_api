@@ -1,4 +1,4 @@
-package com.haradakatsuya190511.controllers;
+package com.haradakatsuya190511.slice.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -28,6 +28,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.haradakatsuya190511.controllers.TransactionController;
 import com.haradakatsuya190511.dtos.transaction.TransactionResponseDto;
 import com.haradakatsuya190511.entities.Category;
 import com.haradakatsuya190511.entities.Transaction;

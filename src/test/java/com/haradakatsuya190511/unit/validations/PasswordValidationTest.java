@@ -1,4 +1,4 @@
-package com.haradakatsuya190511.validations;
+package com.haradakatsuya190511.unit.validations;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -7,6 +7,8 @@ import java.util.Set;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import com.haradakatsuya190511.validations.Password;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;

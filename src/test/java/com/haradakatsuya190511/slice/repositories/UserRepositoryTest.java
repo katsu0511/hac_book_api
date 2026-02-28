@@ -1,4 +1,4 @@
-package com.haradakatsuya190511.repositories;
+package com.haradakatsuya190511.slice.repositories;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -16,6 +16,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.haradakatsuya190511.entities.User;
+import com.haradakatsuya190511.repositories.UserRepository;
 
 @Testcontainers
 @DataJpaTest
