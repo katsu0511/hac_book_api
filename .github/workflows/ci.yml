@@ -19,12 +19,12 @@ jobs:
         image: postgres:17
         env:
           POSTGRES_DB: hac_book
-          POSTGRES_USER: hac_book_user
+          POSTGRES_USER: user
           POSTGRES_PASSWORD: password
         ports:
           - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U hac_book_user"
+          --health-cmd="pg_isready -U user"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
@@ -42,8 +42,8 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
         env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/hac_book
-          SPRING_DATASOURCE_USERNAME: hac_book_user
-          SPRING_DATASOURCE_PASSWORD: password
+          DB_URL: jdbc:postgresql://localhost:5432/hac_book
+          DB_USERNAME: user
+          DB_PASSWORD: password
           SPRING_PROFILES_ACTIVE: test
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
