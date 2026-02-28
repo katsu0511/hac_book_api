@@ -45,3 +45,5 @@ jobs:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/hac_book
           SPRING_DATASOURCE_USERNAME: hac_book_user
           SPRING_DATASOURCE_PASSWORD: password
+          SPRING_PROFILES_ACTIVE: test
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
