@@ -45,5 +45,5 @@ jobs:
           DB_URL: jdbc:postgresql://localhost:5432/hac_book
           DB_USERNAME: user
           DB_PASSWORD: password
-          SPRING_PROFILES_ACTIVE: dev
+          SPRING_PROFILES_ACTIVE: test
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
