@@ -47,21 +47,3 @@ jobs:
           DB_PASSWORD: password
           SPRING_PROFILES_ACTIVE: test
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-
-      - name: Login to Docker Hub
-        if: github.ref == 'refs/heads/main'
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build Docker image
-        if: github.ref == 'refs/heads/main'
-        run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/hac_book_api:latest -t ${{ secrets.DOCKERHUB_USERNAME }}/hac_book_api:${{ github.sha }} .
-
-      - name: Push Docker image
-        if: github.ref == 'refs/heads/main'
-        run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/hac_book_api:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/hac_book_api:${{ github.sha }}
