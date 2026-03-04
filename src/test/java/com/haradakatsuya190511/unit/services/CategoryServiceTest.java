@@ -228,6 +228,16 @@ class CategoryServiceTest {
 	}
 	
 	@Test
+	void getCategoryDetail_notFound_throwsNotFound() {
+		User user = new User();
+		user.setId(1L);
+		
+		when(categoryRepository.findWithParentByIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.empty());
+		
+		assertThrows(CategoryNotFoundException.class, () -> categoryService.getCategoryDetail(user, 1L));
+	}
+	
+	@Test
 	void createCategory_withParent_succeeds() {
 		User user = new User();
 		user.setId(1L);
