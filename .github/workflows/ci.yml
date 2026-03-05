@@ -38,10 +38,12 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      - uses: gradle/actions/setup-gradle@v3
+
       - run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build --no-daemon
         env:
           DB_URL: jdbc:postgresql://localhost:5432/hac_book
           DB_USERNAME: user
