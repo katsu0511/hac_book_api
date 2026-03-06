@@ -202,6 +202,20 @@ class TransactionServiceTest {
 	}
 	
 	@Test
+	void updateTransaction_notFound_throwsException() {
+		User user = new User();
+		
+		UpdateTransactionRequestDto request = new UpdateTransactionRequestDto();
+		request.setCategoryId(10L);
+		
+		when(transactionRepository.findWithCategoryByUserAndId(user, 1L)).thenReturn(Optional.empty());
+		
+		assertThrows(TransactionNotFoundException.class, () ->
+			transactionService.updateTransaction(user, 1L, request)
+		);
+	}
+	
+	@Test
 	void deleteTransaction_success() {
 		User user = new User();
 		user.setId(1L);
@@ -214,5 +228,14 @@ class TransactionServiceTest {
 		transactionService.deleteTransaction(user, 1L);
 		
 		verify(transactionRepository).delete(tx);
+	}
+	
+	@Test
+	void deleteTransaction_notFound_throwsException() {
+		User user = new User();
+		when(transactionRepository.findWithCategoryByUserAndId(user, 1L)).thenReturn(Optional.empty());
+		assertThrows(TransactionNotFoundException.class, () ->
+			transactionService.deleteTransaction(user, 1L)
+		);
 	}
 }
