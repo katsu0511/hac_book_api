@@ -30,6 +30,8 @@ Frontend repository 👉 [Hac Book Web](https://github.com/katsu0511/hac_book_we
 ### Infrastructure
 
 - AWS EC2
+- Docker
+- GitHub Actions (CI/CD)
 - Gradle
 
 ## System Configuration
@@ -51,10 +53,10 @@ Frontend repository 👉 [Hac Book Web](https://github.com/katsu0511/hac_book_we
 - User registration / login / logout (JWT authentication)
 - Category Management
   - Parent-Child category support
-  - Create and edit user-created categories
+  - Create and edit user's categories
 - Transaction (Income / Expense) management
   - Retrieve transactions for a specified period
-  - Create, edit and delete income and expense records
+  - Create, edit and delete user's income and expense records
 - Dashboard
   - Total Income / Expense
   - Expense breakdown for each category
@@ -100,6 +102,12 @@ All endpoints require authentication unless otherwise specified.
 | DELETE | /transactions/{id} | Delete transaction |
 | GET | /dashboard/summary | Get summary |
 
+## Architecture
+
+- Layered architecture (Controller / Service / Repository)
+- DTO pattern used to separate API and domain models
+- Validation handled at both API and database levels
+
 ## Authentication and Authorization
 
 - Token-based authentication using JWT
@@ -108,19 +116,42 @@ All endpoints require authentication unless otherwise specified.
 
 ## Testing
 
-- Implemented unit testing mainly in Service layer
-- Use JUnit 5 + Mockito for unit testing
-- Repositories and external dependencies are mocked to focus on business logic
-- Test coverage is over 80%
+The application includes multiple layers of testing to ensure reliability and maintainability.
+
+- Unit Testing
+  - JUnit 5 + Mockito
+  - Focused on business logic in the Service layer
+
+- Slice Testing
+  - Controller tests using @WebMvcTest
+  - Repository tests using Testcontainers + PostgreSQL
+
+- Integration Testing
+  - End-to-end testing with Spring Boot context
+  - Testcontainers + Docker used to run real PostgreSQL instances
+  - Flyway used to apply database schema in tests
+
+- Test Coverage
+  - Over 80% coverage across core modules
+
+## CI/CD
+
+CI/CD pipeline is fully automated using GitHub Actions.
+
+- Build Docker image on push
+- Run automated tests (unit, slice, integration)
+- Push image to container registry
+- Deploy automatically to AWS EC2
+
+This ensures consistent deployments and prevents regressions.
 
 ## Deployment
 
-- Backend: AWS EC2
-- CI/CD is not yet introduced (planned for future improvement)
+- Backend is containerized using Docker
+- Deployed on AWS EC2
+- CI/CD pipeline automatically builds, tests, and deploys the application
 
 ## Future Improvement
 
-- Add integration testing of Controller layer
-- Automatic testing by CI (GitHub Actions)
 - Document API by OpenAPI (Swagger)
 - Expand authorization management (e.g. administrator role)
