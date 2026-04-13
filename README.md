@@ -1,10 +1,12 @@
 # Hac Book API
 
-This is the backend API for a personal household accounting application.
-It provides features for managing incomes and expenses, categories, and summary dashboards for each user.
+This is the backend API for Hac Book – a personal household accounting application.
 
-The application is designed as a REST API, separated from the frontend (React / TypeScript / Next.js),
-and includes authentication, authorization, testing, and deployment.
+It is built as a RESTful API using Spring Boot, designed with a layered architecture (Controller / Service / Repository) and a clear separation from the frontend (React / TypeScript / Next.js).
+
+The application supports secure authentication and authorization using JWT with HttpOnly cookies, and is backed by a PostgreSQL database.
+
+It includes comprehensive testing (unit, slice, and integration tests with Testcontainers) and a fully automated CI/CD pipeline using Docker and GitHub Actions for deployment to AWS EC2, ensuring production-like reliability.
 
 Frontend repository 👉 [Hac Book Web](https://github.com/katsu0511/hac_book_web)
 
@@ -26,6 +28,8 @@ Frontend repository 👉 [Hac Book Web](https://github.com/katsu0511/hac_book_we
 
 - JUnit 5
 - Mockito
+- Testcontainers
+- Spring Test (@WebMvcTest)
 
 ### Infrastructure
 
@@ -37,16 +41,18 @@ Frontend repository 👉 [Hac Book Web](https://github.com/katsu0511/hac_book_we
 ## System Configuration
 
 - Frontend: Next.js (Vercel)
-- Backend: Spring Boot (AWS EC2)
-- Database: PostgreSQL
+- Backend: Spring Boot (Dockerized, deployed on AWS EC2)
+- Database: PostgreSQL (Docker)
 - Authentication: JWT + HttpOnly Cookie
 
 ```
 +----------------+       +----------------+       +----------------------+       +----------------+
 |    Browser     | ----> |    Next.js     | ----> |   Spring Boot API    | ----> |   PostgreSQL   |
-|                | <---- |    (Vercel)    | <---- |      (AWS EC2)       | <---- |                |
+|                | <---- |    (Vercel)    | <---- |  (Docker / AWS EC2)  | <---- |    (Docker)    |
 +----------------+       +----------------+       +----------------------+       +----------------+
 ```
+
+The backend and database are containerized using Docker to ensure consistent environments across development, testing, and production.
 
 ## Main Functions
 
@@ -70,19 +76,21 @@ including user-specific data separation and category relationships.
 
 ![ER Diagram](docs/er-diagram.png)
 
+Default categories are initialized from category_templates when a user is created.
+
 ### Tables
 
 - users
 - settings
+- category_templates
 - categories
 - transactions
 
-The database design considers data separation for each user,
-allowing the coexistence of default categories and user-created categories.
+The database design considers data separation for each user.
 
 ## API Configuration
 
-All endpoints require authentication unless otherwise specified.
+All endpoints require authentication unless otherwise specified, and enforce user-level data isolation.
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -120,14 +128,14 @@ The application includes multiple layers of testing to ensure reliability and ma
 
 - Unit Testing
   - JUnit 5 + Mockito
-  - Focused on business logic in the Service layer
+  - Focused on business logic mainly in the Service layer
 
 - Slice Testing
   - Controller tests using @WebMvcTest
-  - Repository tests using Testcontainers + PostgreSQL
+  - Repository tests using Spring Data JPA with Testcontainers (PostgreSQL)
 
 - Integration Testing
-  - End-to-end testing with Spring Boot context
+  - End-to-end testing using full Spring Boot context
   - Testcontainers + Docker used to run real PostgreSQL instances
   - Flyway used to apply database schema in tests
 
@@ -140,7 +148,7 @@ CI/CD pipeline is fully automated using GitHub Actions.
 
 - Build Docker image on push
 - Run automated tests (unit, slice, integration)
-- Push image to container registry
+- Push image to Docker Hub
 - Deploy automatically to AWS EC2
 
 This ensures consistent deployments and prevents regressions.
