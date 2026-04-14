@@ -46,10 +46,10 @@ Frontend repository 👉 [Hac Book Web](https://github.com/katsu0511/hac_book_we
 - Authentication: JWT + HttpOnly Cookie
 
 ```
-+----------------+       +----------------+       +----------------------+       +----------------+
-|    Browser     | ----> |    Next.js     | ----> |   Spring Boot API    | ----> |   PostgreSQL   |
-|                | <---- |    (Vercel)    | <---- |  (Docker / AWS EC2)  | <---- |    (Docker)    |
-+----------------+       +----------------+       +----------------------+       +----------------+
++----------------+       +----------------+       +----------------------+       +----------------------+
+|    Browser     | ----> |    Next.js     | ----> |   Spring Boot API    | ----> |      PostgreSQL      |
+|                | <---- |    (Vercel)    | <---- |  (Docker / AWS EC2)  | <---- |  (Docker / AWS EC2)  |
++----------------+       +----------------+       +----------------------+       +----------------------+
 ```
 
 The backend and database are containerized using Docker to ensure consistent environments across development, testing, and production.
