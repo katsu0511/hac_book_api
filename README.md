@@ -1,6 +1,6 @@
 # Hac Book API
 
-This is the backend API for Hac Book – a personal household accounting application.
+This is the backend API for **Hac Book** – a personal household accounting application.
 
 It is built as a RESTful API using Spring Boot, designed with a layered architecture (Controller / Service / Repository) and a clear separation from the frontend (React / TypeScript / Next.js).
 
