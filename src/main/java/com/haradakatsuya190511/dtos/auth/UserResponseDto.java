@@ -8,12 +8,14 @@ public class UserResponseDto {
 	private Long id;
 	private String name;
 	private String email;
+	private String icon;
 	private OffsetDateTime createdAt;
 
 	public UserResponseDto(User user) {
 		this.id = user.getId();
 		this.name = user.getName();
 		this.email = user.getEmail();
+		this.icon = user.getIcon();
 		this.createdAt = user.getCreatedAt();
 	}
 	
@@ -27,6 +29,10 @@ public class UserResponseDto {
 	
 	public String getEmail() {
 		return email;
+	}
+	
+	public String getIcon() {
+		return icon;
 	}
 	
 	public OffsetDateTime getCreatedAt() {
