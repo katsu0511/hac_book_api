@@ -40,7 +40,7 @@ public class Setting {
 	@NotNull
 	@Positive
 	@Digits(integer = 8, fraction = 2)
-	private BigDecimal monthlySavingGoal;
+	private BigDecimal monthlySavingGoal = new BigDecimal("100.00");
 	
 	@OneToOne(optional = false)
 	@MapsId

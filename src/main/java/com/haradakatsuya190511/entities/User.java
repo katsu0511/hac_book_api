@@ -46,7 +46,7 @@ public class User {
 	
 	@Column(length = 255, nullable = false)
 	@NotBlank
-	private String icon;
+	private String icon = "default.png";
 	
 	@Column(name = "created_at", insertable = false, updatable = false)
 	private OffsetDateTime createdAt;
