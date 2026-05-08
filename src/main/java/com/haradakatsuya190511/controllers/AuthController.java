@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.haradakatsuya190511.dtos.auth.LoginRequestDto;
 import com.haradakatsuya190511.dtos.auth.SignupRequestDto;
 import com.haradakatsuya190511.dtos.auth.UserResponseDto;
+import com.haradakatsuya190511.dtos.profile.ProfileResponseDto;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.services.AuthService;
 import com.haradakatsuya190511.utils.AuthCookieManager;
@@ -34,6 +35,15 @@ public class AuthController {
 	public ResponseEntity<Boolean> checkAuth(Authentication authentication) {
 		boolean authenticated = authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken);
 		return ResponseEntity.ok(authenticated);
+	}
+	
+	@GetMapping("/me")
+	public ResponseEntity<ProfileResponseDto> getMe(Authentication authentication) {
+		if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+		User userObj = (User) authentication.getPrincipal();
+		return ResponseEntity.ok(authService.getMe(userObj));
 	}
 	
 	@PostMapping("/login")

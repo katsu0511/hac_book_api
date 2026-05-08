@@ -1,5 +1,7 @@
 package com.haradakatsuya190511.entities;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -9,8 +11,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -30,6 +35,12 @@ public class Setting {
 	@NotBlank
 	@Pattern(regexp = "^[A-Z]{3}$")
 	private String currency = "CAD";
+	
+	@Column(precision = 10, scale = 2, nullable = false)
+	@NotNull
+	@Positive
+	@Digits(integer = 8, fraction = 2)
+	private BigDecimal monthlySavingGoal = new BigDecimal("100.00");
 	
 	@OneToOne(optional = false)
 	@MapsId
@@ -61,6 +72,14 @@ public class Setting {
 	
 	public void setCurrency(String currency) {
 		this.currency = currency;
+	}
+	
+	public BigDecimal getMonthlySavingGoal() {
+		return monthlySavingGoal;
+	}
+	
+	public void setMonthlySavingGoal(BigDecimal monthlySavingGoal) {
+		this.monthlySavingGoal = monthlySavingGoal;
 	}
 	
 	public User getUser() {

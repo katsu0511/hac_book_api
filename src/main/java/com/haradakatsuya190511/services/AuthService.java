@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.haradakatsuya190511.dtos.auth.SignupRequestDto;
+import com.haradakatsuya190511.dtos.profile.ProfileResponseDto;
+import com.haradakatsuya190511.dtos.profile.SettingResponseDto;
+import com.haradakatsuya190511.dtos.profile.UserForProfileResponseDto;
 import com.haradakatsuya190511.entities.Setting;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.exceptions.LoginFailedException;
@@ -40,6 +43,12 @@ public class AuthService {
 		this.settingRepository = settingRepository;
 		this.categoryRepository = categoryRepository;
 		this.entityManager = entityManager;
+	}
+	
+	public ProfileResponseDto getMe(User userObj) {
+		UserForProfileResponseDto user = new UserForProfileResponseDto(userObj);
+		SettingResponseDto setting = new SettingResponseDto(userObj.getSetting());
+		return new ProfileResponseDto(user, setting);
 	}
 	
 	public User authenticate(String email, String password) {

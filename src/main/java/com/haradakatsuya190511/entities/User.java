@@ -44,6 +44,10 @@ public class User {
 	@JsonIgnore
 	private String password;
 	
+	@Column(length = 255, nullable = false)
+	@NotBlank
+	private String icon = "default.png";
+	
 	@Column(name = "created_at", insertable = false, updatable = false)
 	private OffsetDateTime createdAt;
 	
@@ -96,6 +100,14 @@ public class User {
 	
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public String getIcon() {
+		return icon;
+	}
+	
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 	
 	public OffsetDateTime getCreatedAt() {
