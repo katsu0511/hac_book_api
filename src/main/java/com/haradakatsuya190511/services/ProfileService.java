@@ -33,4 +33,10 @@ public class ProfileService {
 			.map(SettingResponseDto::new)
 			.orElseThrow(SettingNotFoundException::new);
 	}
+	
+	public void updateName(Long userId, String name) {
+		User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+		user.setName(name);
+		userRepository.save(user);
+	}
 }
