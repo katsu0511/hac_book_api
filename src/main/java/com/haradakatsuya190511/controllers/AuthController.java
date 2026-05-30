@@ -55,7 +55,7 @@ public class AuthController {
 	}
 	
 	@PostMapping("/logout")
-	public ResponseEntity<?> logout(HttpServletResponse response) {
+	public ResponseEntity<Void> logout(HttpServletResponse response) {
 		cookieManager.clearToken(response);
 		return ResponseEntity.noContent().build();
 	}
