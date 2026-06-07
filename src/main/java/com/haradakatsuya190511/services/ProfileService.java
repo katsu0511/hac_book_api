@@ -39,4 +39,10 @@ public class ProfileService {
 		user.setName(name);
 		userRepository.save(user);
 	}
+	
+	public void updateEmail(Long userId, String email) {
+		User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+		user.setEmail(email);
+		userRepository.save(user);
+	}
 }
