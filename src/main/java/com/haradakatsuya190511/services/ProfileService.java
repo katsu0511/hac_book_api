@@ -15,10 +15,12 @@ public class ProfileService {
 	
 	private final UserRepository userRepository;
 	private final SettingRepository settingRepository;
+	private final AuthService authService;
 	
-	public ProfileService(UserRepository userRepository, SettingRepository settingRepository) {
+	public ProfileService(UserRepository userRepository, SettingRepository settingRepository, AuthService authService) {
 		this.userRepository = userRepository;
 		this.settingRepository = settingRepository;
+		this.authService = authService;
 	}
 	
 	public UserForProfileResponseDto getUser(User user) {
@@ -41,6 +43,7 @@ public class ProfileService {
 	}
 	
 	public void updateEmail(Long userId, String email) {
+		authService.checkEmailNotExists(email);
 		User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 		user.setEmail(email);
 		userRepository.save(user);
