@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.haradakatsuya190511.dtos.profile.ProfileResponseDto;
 import com.haradakatsuya190511.dtos.profile.UpdateEmailRequestDto;
 import com.haradakatsuya190511.dtos.profile.UpdateNameRequestDto;
+import com.haradakatsuya190511.dtos.profile.UpdatePasswordRequestDto;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.services.ProfileService;
 import com.haradakatsuya190511.utils.AuthCookieManager;
@@ -42,6 +43,13 @@ public class ProfileController {
 	@PutMapping("/profile/email")
 	public ResponseEntity<Void> updateEmail(@AuthenticationPrincipal User user, @Valid @RequestBody UpdateEmailRequestDto request, HttpServletResponse response) {
 		profileService.updateEmail(user.getId(), request.getEmail());
+		cookieManager.clearToken(response);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@PutMapping("/profile/password")
+	public ResponseEntity<Void> updatePassword(@AuthenticationPrincipal User user, @Valid @RequestBody UpdatePasswordRequestDto request, HttpServletResponse response) {
+		profileService.updatePassword(user.getId(), request.getPassword());
 		cookieManager.clearToken(response);
 		return ResponseEntity.noContent().build();
 	}
