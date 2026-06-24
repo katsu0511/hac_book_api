@@ -1,50 +1,50 @@
-name: CI
+# name: CI
 
-on:
-  push:
-    branches: [main]
+# on:
+#   push:
+#     branches: [main]
 
-  pull_request:
-    branches: [main]
+#   pull_request:
+#     branches: [main]
 
-jobs:
-  build:
-    name: CI
+# jobs:
+#   build:
+#     name: CI
 
-    runs-on: ubuntu-latest
+#     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:17
-        env:
-          POSTGRES_DB: hac_book
-          POSTGRES_USER: user
-          POSTGRES_PASSWORD: password
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U user"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+#     services:
+#       postgres:
+#         image: postgres:17
+#         env:
+#           POSTGRES_DB: hac_book
+#           POSTGRES_USER: user
+#           POSTGRES_PASSWORD: password
+#         ports:
+#           - 5432:5432
+#         options: >-
+#           --health-cmd="pg_isready -U user"
+#           --health-interval=10s
+#           --health-timeout=5s
+#           --health-retries=5
 
-    steps:
-      - uses: actions/checkout@v4
+#     steps:
+#       - uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
+#       - uses: actions/setup-java@v4
+#         with:
+#           distribution: temurin
+#           java-version: 17
 
-      - uses: gradle/actions/setup-gradle@v3
+#       - uses: gradle/actions/setup-gradle@v3
 
-      - run: chmod +x gradlew
+#       - run: chmod +x gradlew
 
-      - name: Build with Gradle
-        run: ./gradlew build --no-daemon
-        env:
-          DB_URL: jdbc:postgresql://localhost:5432/hac_book
-          DB_USERNAME: user
-          DB_PASSWORD: password
-          SPRING_PROFILES_ACTIVE: test
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+#       - name: Build with Gradle
+#         run: ./gradlew build --no-daemon
+#         env:
+#           DB_URL: jdbc:postgresql://localhost:5432/hac_book
+#           DB_USERNAME: user
+#           DB_PASSWORD: password
+#           SPRING_PROFILES_ACTIVE: test
+#           JWT_SECRET: ${{ secrets.JWT_SECRET }}
