@@ -1,10 +1,13 @@
 package com.haradakatsuya190511.services;
 
+import java.math.BigDecimal;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.haradakatsuya190511.dtos.profile.SettingResponseDto;
 import com.haradakatsuya190511.dtos.profile.UserForProfileResponseDto;
+import com.haradakatsuya190511.entities.Setting;
 import com.haradakatsuya190511.entities.User;
 import com.haradakatsuya190511.exceptions.SettingNotFoundException;
 import com.haradakatsuya190511.exceptions.UserNotFoundException;
@@ -57,5 +60,13 @@ public class ProfileService {
 		User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 		user.setPassword(hashedPassword);
 		userRepository.save(user);
+	}
+	
+	public void updateMonthlySavingGoal(Long userId, BigDecimal monthlySavingGoal) {
+		Setting setting = settingRepository.findById(userId)
+			.filter(s -> s.getUser().getId().equals(userId))
+			.orElseThrow(SettingNotFoundException::new);
+		setting.setMonthlySavingGoal(monthlySavingGoal);
+		settingRepository.save(setting);
 	}
 }

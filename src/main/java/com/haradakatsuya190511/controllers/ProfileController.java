@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.haradakatsuya190511.dtos.profile.ProfileResponseDto;
 import com.haradakatsuya190511.dtos.profile.UpdateEmailRequestDto;
+import com.haradakatsuya190511.dtos.profile.UpdateMonthlySavingGoalRequestDto;
 import com.haradakatsuya190511.dtos.profile.UpdateNameRequestDto;
 import com.haradakatsuya190511.dtos.profile.UpdatePasswordRequestDto;
 import com.haradakatsuya190511.entities.User;
@@ -51,6 +52,12 @@ public class ProfileController {
 	public ResponseEntity<Void> updatePassword(@AuthenticationPrincipal User user, @Valid @RequestBody UpdatePasswordRequestDto request, HttpServletResponse response) {
 		profileService.updatePassword(user.getId(), request.getPassword());
 		cookieManager.clearToken(response);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@PutMapping("/setting/saving-goal")
+	public ResponseEntity<Void> updateMonthlySavingGoal(@AuthenticationPrincipal User user, @Valid @RequestBody UpdateMonthlySavingGoalRequestDto request) {
+		profileService.updateMonthlySavingGoal(user.getId(), request.getMonthlySavingGoal());
 		return ResponseEntity.noContent().build();
 	}
 }
