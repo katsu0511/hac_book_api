@@ -9,6 +9,7 @@ import com.haradakatsuya190511.dtos.profile.SettingResponseDto;
 import com.haradakatsuya190511.dtos.profile.UserForProfileResponseDto;
 import com.haradakatsuya190511.entities.Setting;
 import com.haradakatsuya190511.entities.User;
+import com.haradakatsuya190511.exceptions.OldPasswordNotMatchException;
 import com.haradakatsuya190511.exceptions.SettingNotFoundException;
 import com.haradakatsuya190511.exceptions.UserNotFoundException;
 import com.haradakatsuya190511.repositories.SettingRepository;
@@ -55,9 +56,12 @@ public class ProfileService {
 		userRepository.save(user);
 	}
 	
-	public void updatePassword(Long userId, String password) {
-		String hashedPassword = passwordEncoder.encode(password);
+	public void updatePassword(Long userId, String oldPassword, String newPassword) {
 		User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+		if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+			throw new OldPasswordNotMatchException();
+		}
+		String hashedPassword = passwordEncoder.encode(newPassword);
 		user.setPassword(hashedPassword);
 		userRepository.save(user);
 	}
