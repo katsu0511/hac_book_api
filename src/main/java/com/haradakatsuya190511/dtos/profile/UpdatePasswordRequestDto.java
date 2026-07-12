@@ -7,13 +7,25 @@ public class UpdatePasswordRequestDto {
 	
 	@NotBlank
 	@Size(max = 255)
-	private String password;
+	private String oldPassword;
 	
-	public String getPassword() {
-		return password;
+	@NotBlank
+	@Size(max = 255)
+	private String newPassword;
+	
+	public String getOldPassword() {
+		return oldPassword;
 	}
 	
-	public void setPassword(String password) {
-		this.password = password;
+	public String getNewPassword() {
+		return newPassword;
+	}
+	
+	public void setOldPassword(String oldPassword) {
+		this.oldPassword = oldPassword;
+	}
+	
+	public void setNewPassword(String newPassword) {
+		this.newPassword = newPassword;
 	}
 }
