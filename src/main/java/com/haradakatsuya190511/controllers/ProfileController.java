@@ -50,7 +50,7 @@ public class ProfileController {
 	
 	@PutMapping("/profile/password")
 	public ResponseEntity<Void> updatePassword(@AuthenticationPrincipal User user, @Valid @RequestBody UpdatePasswordRequestDto request, HttpServletResponse response) {
-		profileService.updatePassword(user.getId(), request.getPassword());
+		profileService.updatePassword(user.getId(), request.getOldPassword(), request.getNewPassword());
 		cookieManager.clearToken(response);
 		return ResponseEntity.noContent().build();
 	}
